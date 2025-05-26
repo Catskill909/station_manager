@@ -151,6 +151,59 @@
             border-color: #505050;
         }
 
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .btn-admin {
+            background-color: #383838;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .btn-admin:hover {
+            background-color: #424242;
+        }
+
+        .admin-menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .admin-menu-options button {
+            width: 100%;
+            text-align: left;
+            padding: 10px 15px;
+        }
+
+        .password-strength {
+            height: 5px;
+            background-color: #2b2b2b;
+            margin: 10px 0 20px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        #passwordStrength {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .error-message {
+            background-color: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 3px solid #ff6b6b;
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -274,7 +327,36 @@
 <body>
     <header>
         <h1>Radio Station Manager</h1>
+        <button id="logoutBtn" class="btn btn-admin" style="display: none;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
     </header>
+    
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h2>Enter Password</h2>
+            <div id="passwordError" class="error-message" style="display: none; color: #ff6b6b; margin: 10px 0; padding: 8px; background: rgba(255,0,0,0.1); border-radius: 4px;"></div>
+            <input type="password" id="passwordInput" placeholder="Enter password" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #fff;">
+            <div class="modal-buttons">
+                <button id="submitPasswordBtn" class="btn btn-save">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <h2>Change Password</h2>
+            <div id="changePasswordError" class="error-message" style="display: none; color: #ff6b6b; margin: 10px 0; padding: 8px; background: rgba(255,0,0,0.1); border-radius: 4px;"></div>
+            <input type="password" id="newPasswordInput" placeholder="New password" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #fff;">
+            <input type="password" id="confirmPasswordInput" placeholder="Confirm new password" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #fff;">
+            <div class="modal-buttons">
+                <button id="savePasswordBtn" class="btn btn-save">Save</button>
+                <button id="cancelPasswordBtn" class="btn btn-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <button id="addStationBtn" class="btn btn-add">Add New Station</button>
@@ -1106,51 +1188,109 @@
         }
 
         function renderTable() {
-            stationsTableBody.innerHTML = ''; // Clear existing rows
-            stations.forEach(station => {
-                const row = stationsTableBody.insertRow();
-                row.insertCell().textContent = station.title;
-                row.insertCell().textContent = station.city;
-                const websiteCell = row.insertCell();
-                const websiteLink = document.createElement('a');
-                websiteLink.href = station.website;
-                websiteLink.textContent = station.website;
-                websiteLink.target = "_blank";
-                websiteCell.appendChild(websiteLink);
-
-                const actionsCell = row.insertCell();
-                actionsCell.className = 'actions';
-
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.className = 'btn btn-edit';
-                editButton.onclick = () => openModal(station);
-                actionsCell.appendChild(editButton);
-
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.className = 'btn btn-delete';
-                deleteButton.onclick = () => showDeleteConfirmation(station);
-                actionsCell.appendChild(deleteButton);
-            });
+            if (!isAuthenticated) {
+                // Don't render the table if not logged in
+                document.querySelector('.container').style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Show the container when logged in
+                document.querySelector('.container').style.display = 'block';
+                
+                // Make sure we have a stations table body
+                const tbody = document.querySelector('#stationsTable tbody');
+                if (!tbody) {
+                    console.error('Stations table body not found');
+                    return;
+                }
+                
+                // Clear existing rows
+                tbody.innerHTML = '';
+                
+                // Check if we have stations to display
+                if (!stations || stations.length === 0) {
+                    console.log('No stations to display');
+                    return;
+                }
+                
+                // Add each station to the table
+                stations.forEach(station => {
+                    const row = tbody.insertRow();
+                    
+                    // Title
+                    const titleCell = row.insertCell();
+                    titleCell.textContent = station.title || 'No Title';
+                    
+                    // City
+                    const cityCell = row.insertCell();
+                    cityCell.textContent = station.city || 'N/A';
+                    
+                    // Website
+                    const websiteCell = row.insertCell();
+                    if (station.website) {
+                        const websiteLink = document.createElement('a');
+                        websiteLink.href = station.website.startsWith('http') ? station.website : `http://${station.website}`;
+                        websiteLink.textContent = station.website;
+                        websiteLink.target = "_blank";
+                        websiteCell.appendChild(websiteLink);
+                    } else {
+                        websiteCell.textContent = 'N/A';
+                    }
+                    
+                    // Actions
+                    const actionsCell = row.insertCell();
+                    actionsCell.className = 'actions';
+                    
+                    // Edit button
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.className = 'btn btn-edit';
+                    editButton.onclick = () => openModal(station);
+                    actionsCell.appendChild(editButton);
+                    
+                    // Delete button
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.className = 'btn btn-delete';
+                    deleteButton.onclick = () => showDeleteConfirmation(station);
+                    actionsCell.appendChild(deleteButton);
+                });
+                
+            } catch (error) {
+                console.error('Error rendering table:', error);
+            }
         }
 
         function openModal(station = null) {
-            stationModal.style.display = 'block';
-            if (station) {
-                modalTitle.textContent = 'Edit Station';
-                stationIdInput.value = station.id;
-                stationTitleInput.value = station.title;
-                stationCityInput.value = station.city;
-                stationWebsiteInput.value = station.website;
-            } else {
-                modalTitle.textContent = 'Add Station';
-                stationIdInput.value = ''; // For new station
-                stationTitleInput.value = '';
-                stationCityInput.value = '';
-                stationWebsiteInput.value = '';
+            if (!isAuthenticated) {
+                showPasswordModal();
+                return;
             }
-            stationTitleInput.focus();
+            
+            const modal = document.getElementById('stationModal');
+            const title = modal.querySelector('h2');
+            const idInput = document.getElementById('stationId');
+            const titleInput = document.getElementById('stationTitle');
+            const cityInput = document.getElementById('stationCity');
+            const websiteInput = document.getElementById('stationWebsite');
+            
+            if (station) {
+                title.textContent = 'Edit Station';
+                idInput.value = station.id || '';
+                titleInput.value = station.title || '';
+                cityInput.value = station.city || '';
+                websiteInput.value = station.website || '';
+            } else {
+                title.textContent = 'Add Station';
+                idInput.value = '';
+                titleInput.value = '';
+                cityInput.value = '';
+                websiteInput.value = '';
+            }
+            
+            modal.style.display = 'block';
+            titleInput.focus();
         }
 
         function closeModal() {
@@ -1158,89 +1298,152 @@
         }
 
         function saveStation() {
-            const id = stationIdInput.value;
-            const title = stationTitleInput.value.trim();
-            const city = stationCityInput.value.trim();
-            const website = stationWebsiteInput.value.trim();
-
-            if (!title || !city || !website) {
-                alert('Please fill in all fields.');
+            if (!isAuthenticated) {
+                showPasswordModal();
                 return;
             }
-            // Basic URL validation
+            
+            const id = document.getElementById('stationId').value;
+            const title = document.getElementById('stationTitle').value.trim();
+            const city = document.getElementById('stationCity').value.trim();
+            const website = document.getElementById('stationWebsite').value.trim();
+
+            if (!title) {
+                alert('Title is required');
+                return;
+            }
+
             try {
-                new URL(website);
-            } catch (_) {
-                alert('Please enter a valid website URL.');
-                return;
-            }
-
-
-            if (id) { // Editing existing station
-                const index = stations.findIndex(s => s.id === id);
-                if (index > -1) {
-                    stations[index] = { ...stations[index], title, city, website, guid: website }; // Update guid if website changes
+                if (id) {
+                    // Update existing station
+                    const index = stations.findIndex(s => s.id === id);
+                    if (index !== -1) {
+                        stations[index] = { 
+                            ...stations[index], 
+                            title, 
+                            city: city || 'N/A', 
+                            website: website || '' 
+                        };
+                    }
+                } else {
+                    // Add new station
+                    const newId = Date.now().toString();
+                    stations.push({ 
+                        id: newId, 
+                        title, 
+                        city: city || 'N/A', 
+                        website: website || '',
+                        guid: website || newId
+                    });
                 }
-            } else { // Adding new station
-                // For a new station, use the website as the ID/GUID if no other unique ID is generated.
-                // Ensure GUID is unique or handle potential collisions if necessary.
-                // For simplicity, we'll use the website URL as the GUID.
-                const newId = website; // Or generate a more robust unique ID
-                if (stations.some(s => s.id === newId)) {
-                    alert('A station with this website URL (GUID) already exists. Please use a unique website URL.');
-                    return;
-                }
-                stations.push({ id: newId, title, city, website, guid: newId });
+                
+                renderTable();
+                closeModal();
+            } catch (error) {
+                console.error('Error saving station:', error);
+                alert('An error occurred while saving the station');
             }
-            renderTable();
-            closeModal();
         }
 
         let stationToDelete = null;
-
+        
         function showDeleteConfirmation(station) {
+            if (!isAuthenticated) {
+                showPasswordModal();
+                return;
+            }
+            
             stationToDelete = station;
-            stationToDeleteName.textContent = station.title;
-            deleteConfirmModal.style.display = 'block';
+            document.getElementById('stationToDeleteName').textContent = station.title || 'this station';
+            document.getElementById('deleteConfirmModal').style.display = 'block';
         }
 
         function deleteStation() {
+            if (!isAuthenticated) {
+                showPasswordModal();
+                return;
+            }
+            
             if (stationToDelete) {
-                stations = stations.filter(s => s.id !== stationToDelete.id);
-                renderTable();
-                closeDeleteModal();
+                try {
+                    stations = stations.filter(s => s.id !== stationToDelete.id);
+                    renderTable();
+                    closeDeleteModal();
+                } catch (error) {
+                    console.error('Error deleting station:', error);
+                    alert('An error occurred while deleting the station');
+                }
             }
         }
 
         function closeDeleteModal() {
-            deleteConfirmModal.style.display = 'none';
             stationToDelete = null;
-            stationToDeleteName.textContent = '';
+            document.getElementById('deleteConfirmModal').style.display = 'none';
         }
 
+        // Default channel info if not set
+        const defaultChannelInfo = {
+            title: 'Pacifica Affiliates',
+            link: 'https://pacifica.org',
+            atomLink: 'https://pacifica.org/affiliates',
+            description: 'List of Pacifica Radio Network affiliates',
+            language: 'en-us',
+            pubDate: new Date().toUTCString(),
+            lastBuildDate: new Date().toUTCString()
+        };
+
         function generateXML() {
-            let xmlString = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-            xmlString += `<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">\n`;
-            xmlString += `  <channel>\n`;
-            xmlString += `    <title>${escapeXml(originalChannelInfo.title)}</title>\n`;
-            xmlString += `    <link>${escapeXml(originalChannelInfo.link)}</link>\n`;
-            xmlString += `    <atom:link href="${escapeXml(originalChannelInfo.atomLink)}" rel="self" type="application/rss+xml"/>\n`;
-            xmlString += `    <description>${escapeXml(originalChannelInfo.description)}</description>\n`;
-            // Update lastBuildDate to current time when generating XML
-            xmlString += `    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>\n`;
+            try {
+                // Use the parsed channel info or fall back to defaults
+                const channelInfo = window.originalChannelInfo || defaultChannelInfo;
+                
+                let xmlString = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+                xmlString += `<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">\n`;
+                xmlString += `  <channel>\n`;
+                xmlString += `    <title>${escapeXml(channelInfo.title)}</title>\n`;
+                xmlString += `    <link>${escapeXml(channelInfo.link)}</link>\n`;
+                xmlString += `    <atom:link href="${escapeXml(channelInfo.atomLink)}" rel="self" type="application/rss+xml"/>\n`;
+                xmlString += `    <description>${escapeXml(channelInfo.description)}</description>\n`;
+                xmlString += `    <language>${escapeXml(channelInfo.language || 'en-us')}</language>\n`;
+                xmlString += `    <pubDate>${escapeXml(channelInfo.pubDate || new Date().toUTCString())}</pubDate>\n`;
+                xmlString += `    <lastBuildDate>${escapeXml(channelInfo.lastBuildDate || new Date().toUTCString())}</lastBuildDate>\n`;
 
-            stations.forEach(station => {
-                xmlString += `    <item>\n`;
-                xmlString += `      <title>${escapeXml(station.title)}</title>\n`;
-                xmlString += `      <link>${escapeXml(station.website)}</link>\n`;
-                xmlString += `      <description>${escapeXml(station.city)}</description>\n`;
-                xmlString += `      <guid>${escapeXml(station.guid)}</guid>\n`;
-                xmlString += `    </item>\n`;
-            });
+                // Add stations
+                if (stations && stations.length > 0) {
+                    stations.forEach(station => {
+                        if (station.title) {  // Only include stations with a title
+                            xmlString += `    <item>\n`;
+                            xmlString += `      <title>${escapeXml(station.title)}</title>\n`;
+                            
+                            // Handle website/link
+                            const link = station.website || station.link || '';
+                            if (link) {
+                                xmlString += `      <link>${escapeXml(link)}</link>\n`;
+                            }
+                            
+                            // Handle city/description
+                            const description = station.city || station.description || '';
+                            if (description) {
+                                xmlString += `      <description>${escapeXml(description)}</description>\n`;
+                            }
+                            
+                            // Generate a GUID if none exists
+                            const guid = station.guid || station.id || link || `station-${Date.now()}`;
+                            xmlString += `      <guid isPermaLink="${guid.startsWith('http') ? 'true' : 'false'}">${escapeXml(guid)}</guid>\n`;
+                            
+                            xmlString += `    </item>\n`;
+                        }
+                    });
+                }
 
-            xmlString += `  </channel>\n`;
-            xmlString += `</rss>`;
-            return xmlString;
+                xmlString += `  </channel>\n`;
+                xmlString += `</rss>`;
+                
+                return xmlString;
+            } catch (error) {
+                console.error('Error generating XML:', error);
+                return null;
+            }
         }
 
         function escapeXml(unsafe) {
@@ -1259,21 +1462,32 @@
         }
 
         function downloadXML() {
-            const xmlData = xmlOutputTextarea.value;
-            if (!xmlData) {
-                alert("No XML data to download. Please generate it first.");
+            if (!isAuthenticated) {
+                showPasswordModal();
                 return;
             }
-            const blob = new Blob([xmlData], { type: 'application/xml' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'pacifica_affiliates_updated.xml';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        };
+            
+            try {
+                const xmlData = generateXML();
+                if (!xmlData) {
+                    alert("No XML data to download. Please add some stations first.");
+                    return;
+                }
+                
+                const blob = new Blob([xmlData], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'pacifica_affiliates_updated.xml';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error generating/downloading XML:', error);
+                alert('An error occurred while generating the XML file');
+            }
+        }
 
         // Set up event listeners
         document.getElementById('addStationBtn').onclick = () => openModal();
@@ -1311,9 +1525,204 @@
             }
         }
 
-        // Initial load
-        stations = parseXML(initialXmlData);
-        renderTable();
+        // Password protection
+        const PASSWORD_KEY = 'station_manager_password';
+        let isAuthenticated = false;
+        
+        // Check if password is set, if not set default
+        async function initAuth() {
+            if (!localStorage.getItem(PASSWORD_KEY)) {
+                // First time setup - set default password 'admin123'
+                const defaultPassword = 'admin123';
+                const hashedPassword = await hashPassword(defaultPassword);
+                localStorage.setItem(PASSWORD_KEY, JSON.stringify({
+                    hash: hashedPassword,
+                    lastChanged: new Date().toISOString()
+                }));
+            }
+            showPasswordModal();
+        }
+        
+        // Simple password hashing
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode('pacifica-' + password); // Add a pepper
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Show password modal
+        function showPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('passwordInput').focus();
+            disableApp();
+        }
+        
+        // Hide password modal
+        function hidePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+        }
+        
+        // Disable app (show only password modal)
+        function disableApp() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.querySelectorAll('button, input, select, textarea').forEach(el => {
+                el.disabled = true;
+            });
+            // Re-enable password input
+            document.getElementById('passwordInput').disabled = false;
+            document.getElementById('submitPasswordBtn').disabled = false;
+        }
+        
+        // Enable app (hide password modal)
+        function enableApp() {
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
+            document.querySelectorAll('button, input, select, textarea').forEach(el => {
+                el.disabled = false;
+            });
+            isAuthenticated = true;
+            
+            // Make sure stations are loaded and rendered
+            if (!stations || stations.length === 0) {
+                stations = parseXML(initialXmlData);
+            }
+            renderTable();
+        }
+        
+        // Verify password
+        async function verifyPassword(password) {
+            const savedData = JSON.parse(localStorage.getItem(PASSWORD_KEY));
+            const hashedPassword = await hashPassword(password);
+            return hashedPassword === savedData.hash;
+        }
+        
+        // Change password
+        async function changePassword(newPassword) {
+            const hashedPassword = await hashPassword(newPassword);
+            localStorage.setItem(PASSWORD_KEY, JSON.stringify({
+                hash: hashedPassword,
+                lastChanged: new Date().toISOString()
+            }));
+            return true;
+        }
+        
+        // Event Listeners
+        document.getElementById('submitPasswordBtn').addEventListener('click', async () => {
+            const password = document.getElementById('passwordInput').value;
+            if (await verifyPassword(password)) {
+                hidePasswordModal();
+                enableApp();
+            } else {
+                document.getElementById('passwordError').textContent = 'Incorrect password';
+                document.getElementById('passwordError').style.display = 'block';
+            }
+        });
+        
+        document.getElementById('passwordInput').addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const password = document.getElementById('passwordInput').value;
+                if (await verifyPassword(password)) {
+                    hidePasswordModal();
+                    enableApp();
+                } else {
+                    document.getElementById('passwordError').textContent = 'Incorrect password';
+                    document.getElementById('passwordError').style.display = 'block';
+                }
+            }
+        });
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            isAuthenticated = false;
+            showPasswordModal();
+        });
+        
+        // Change password functionality
+        document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
+            document.getElementById('changePasswordModal').style.display = 'block';
+        });
+        
+        document.getElementById('savePasswordBtn')?.addEventListener('click', async () => {
+            const newPassword = document.getElementById('newPasswordInput').value;
+            const confirmPassword = document.getElementById('confirmPasswordInput').value;
+            
+            if (newPassword !== confirmPassword) {
+                document.getElementById('changePasswordError').textContent = 'Passwords do not match';
+                document.getElementById('changePasswordError').style.display = 'block';
+                return;
+            }
+            
+            if (newPassword.length < 4) {
+                document.getElementById('changePasswordError').textContent = 'Password must be at least 4 characters';
+                document.getElementById('changePasswordError').style.display = 'block';
+                return;
+            }
+            
+            await changePassword(newPassword);
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('confirmPasswordInput').value = '';
+            alert('Password changed successfully!');
+        });
+        
+        document.getElementById('cancelPasswordBtn')?.addEventListener('click', () => {
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('confirmPasswordInput').value = '';
+            document.getElementById('changePasswordError').style.display = 'none';
+        });
+        
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            // Parse the XML data first
+            stations = parseXML(initialXmlData);
+            
+            // Initialize authentication
+            initAuth();
+            
+            // Set up event listeners for the app
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            // Add Station button
+            document.getElementById('addStationBtn').addEventListener('click', () => openModal());
+            
+            // Save Station button
+            document.getElementById('saveStationBtn').addEventListener('click', saveStation);
+            
+            // Cancel Modal button
+            document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+            
+            // Download XML button
+            document.getElementById('downloadXmlBtn').addEventListener('click', downloadXML);
+            
+            // Delete confirmation
+            document.getElementById('confirmDeleteBtn').addEventListener('click', deleteStation);
+            
+            // Close modals when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+        }
 
     </script>
 </body>
