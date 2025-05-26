@@ -23,6 +23,14 @@
             width: 100%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.65); /* Softer, more diffused */
             border-bottom: 1px solid #282828; /* Darker subtle border */
+            position: relative;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 60px; /* Add padding for the logout button */
         }
         header h1 {
             margin: 0;
@@ -33,10 +41,16 @@
             letter-spacing: 1.5px;
             color: #e8e8e8; /* Bright off-white for title */
         }
+        .controls {
+            margin: 20px auto; /* Center the controls */
+            text-align: center; /* Center the button */
+            max-width: 1200px; /* Match container width */
+            padding: 0 30px; /* Match container padding */
+        }
         .container {
             width: 90%;
             max-width: 1200px;
-            margin: 25px auto;
+            margin: 0 auto 25px; /* Adjusted margin to bring content up */
             background-color: #1c1c1c; /* Very dark container background */
             padding: 30px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.7); /* Deeper shadow */
@@ -83,12 +97,16 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.9em;
-            transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-            text-transform: uppercase;
+            transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease, color 0.15s ease;
+            text-transform: none; /* Changed from uppercase to normal text */
             font-weight: 500;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
             background-color: #2b2b2b; /* Dark base for buttons */
-            color: #cccccc;
+            color: #e0e0e0; /* Lighter text for better contrast */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         .actions button:hover, .btn:hover {
             transform: translateY(-1px);
@@ -96,7 +114,7 @@
             background-color: #353535; /* Slightly lighter on hover */
             border-color: #505050;
         }
-.btn-add { /* Specific styling for Add New Station button */
+        .btn-add { /* Specific styling for Add New Station button */
             background-color: #e0e0e0; /* Light background to stand out */
             color: #181818; /* Dark text for contrast */
             border: 1px solid #e0e0e0; /* Border matching background */
@@ -152,21 +170,22 @@
         }
 
         /* Header Styles */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
         .btn-admin {
-            background-color: #383838;
-            padding: 8px 15px;
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
             font-size: 0.9em;
+            transition: background-color 0.2s ease;
         }
-
+        
         .btn-admin:hover {
-            background-color: #424242;
+            background-color: #444;
         }
 
         .admin-menu-options {
@@ -180,6 +199,23 @@
             width: 100%;
             text-align: left;
             padding: 10px 15px;
+        }
+
+        #downloadXmlBtn {
+            margin: 20px auto; /* Center the button */
+            display: block; /* Make it a block to center with auto margins */
+            background-color: #4a6da7;
+            color: white;
+            border: none;
+            padding: 12px 24px; /* Add some padding */
+            font-size: 1.1em; /* Slightly larger text */
+            border-radius: 4px; /* Match other buttons */
+            cursor: pointer; /* Show pointer on hover */
+            transition: background-color 0.2s ease; /* Smooth hover effect */
+        }
+        
+        #downloadXmlBtn:hover {
+            background-color: #3a5d9e; /* Slightly darker on hover */
         }
 
         .password-strength {
@@ -326,10 +362,12 @@
 </head>
 <body>
     <header>
-        <h1>Radio Station Manager</h1>
-        <button id="logoutBtn" class="btn btn-admin" style="display: none;">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+        <div class="header-content">
+            <h1>Radio Station Manager</h1>
+            <button id="logoutBtn" class="btn btn-admin" style="display: none;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
     </header>
     
     <!-- Password Modal -->
@@ -359,13 +397,26 @@
     </div>
 
     <div class="container">
-        <button id="addStationBtn" class="btn btn-add">Add New Station</button>
-        <table id="stationsTable">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>City</th>
-                    <th>Website</th>
+        <div style="margin: 20px 0;">
+            <button id="addStationBtn" class="btn btn-add">
+                <i class="fas fa-plus"></i> Add New Station
+            </button>
+        </div>
+        <form id="stationForm" onsubmit="event.preventDefault();">
+            <table id="stationsTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>City</th>
+                        <th>Website</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Station data will be populated here by JavaScript -->
+                </tbody>
+            </table>
+        </form>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -373,12 +424,6 @@
                 <!-- Station data will be populated here by JavaScript -->
             </tbody>
         </table>
-        <button id="saveXmlBtn" class="btn btn-save-xml">Generate Updated XML</button>
-        <div id="xmlOutputContainer" style="display:none;">
-            <h3>Updated XML Data:</h3>
-            <textarea id="xmlOutput" readonly></textarea>
-            <button id="downloadXmlBtn" class="btn" style="background-color: #009688; color:white; margin-top:10px;">Download XML File</button>
-        </div>
     </div>
 
     <!-- Modal for Add/Edit Station -->
@@ -404,16 +449,22 @@
 <!-- Modal for Delete Confirmation -->
     <div id="deleteConfirmModal" class="modal">
         <div class="modal-content">
-            <h2 id="deleteModalTitle">Confirm Deletion</h2>
-            <p id="deleteModalMessage">Are you sure you want to delete <strong id="stationToDeleteName"></strong>? This action cannot be undone.</p>
-            <div class="modal-buttons">
-                <button id="confirmDeleteBtn" class="btn btn-delete">Delete</button>
-                <button id="cancelDeleteBtn" class="btn btn-cancel">Cancel</button>
+            <h3>Confirm Delete</h3>
+            <p id="deleteConfirmationText">Are you sure you want to delete this station?</p>
+            <div class="modal-actions">
+                <button id="cancelDeleteBtn" class="btn btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button id="confirmDeleteBtn" class="btn btn-delete">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
             </div>
         </div>
     </div>
 
     <script>
+        // Store the original XML data
+        // Initialize XML data ONCE; never reassign
         const initialXmlData = `<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 <channel>
@@ -421,8 +472,18 @@
 <link>https://pacificanetwork.org/stations-2/</link>
 <atom:link href="https://starkey.digital/pacifica/pacifica_affiliates.xml" rel="self" type="application/rss+xml"/>
 <description>List of Pacifica Network affiliate stations</description>
-<lastBuildDate>Thu, 17 Apr 2025 23:11:30 +0000</lastBuildDate>
-<item>
+<lastBuildDate>${new Date().toISOString()}</lastBuildDate>`;
+
+// Initialize default XML data if not present
+const defaultXmlData = `<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Pacifica Network Affiliates</title>
+    <link>https://pacificanetwork.org/stations-2/</link>
+    <atom:link href="https://starkey.digital/pacifica/pacifica_affiliates.xml" rel="self" type="application/rss+xml"/>
+    <description>List of Pacifica Network affiliate stations</description>
+    <lastBuildDate>${new Date().toISOString()}</lastBuildDate>
+    <item>
 <title>AfroBeat Radio</title>
 <link>http://afrobeatradio.org/</link>
 <description>Brooklyn, NY</description>
@@ -1205,57 +1266,79 @@
                     return;
                 }
                 
-                // Clear existing rows
-                tbody.innerHTML = '';
+                // Create a document fragment for better performance
+                const fragment = document.createDocumentFragment();
                 
-                // Check if we have stations to display
-                if (!stations || stations.length === 0) {
-                    console.log('No stations to display');
+                // Make sure stations is an array and sort it alphabetically by title
+                if (!Array.isArray(stations)) {
+                    console.error('Stations is not an array:', stations);
                     return;
                 }
                 
-                // Add each station to the table
-                stations.forEach(station => {
-                    const row = tbody.insertRow();
+                const sortedStations = [...stations].sort((a, b) => 
+                    (a.title || '').localeCompare(b.title || '')
+                );
+                
+                // Add each station to the fragment
+                sortedStations.forEach(station => {
+                    if (!station) return; // Skip null/undefined stations
                     
-                    // Title
-                    const titleCell = row.insertCell();
-                    titleCell.textContent = station.title || 'No Title';
+                    const row = document.createElement('tr');
                     
-                    // City
-                    const cityCell = row.insertCell();
-                    cityCell.textContent = station.city || 'N/A';
+                    // Create table cells
+                    const titleCell = document.createElement('td');
+                    titleCell.textContent = station.title || '';
                     
-                    // Website
-                    const websiteCell = row.insertCell();
+                    const cityCell = document.createElement('td');
+                    cityCell.textContent = station.city || '';
+                    
+                    const websiteCell = document.createElement('td');
                     if (station.website) {
-                        const websiteLink = document.createElement('a');
-                        websiteLink.href = station.website.startsWith('http') ? station.website : `http://${station.website}`;
-                        websiteLink.textContent = station.website;
-                        websiteLink.target = "_blank";
-                        websiteCell.appendChild(websiteLink);
-                    } else {
-                        websiteCell.textContent = 'N/A';
+                        const link = document.createElement('a');
+                        const website = String(station.website);
+                        link.href = website.startsWith('http') ? website : `http://${website}`;
+                        link.textContent = website;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        websiteCell.appendChild(link);
                     }
                     
-                    // Actions
-                    const actionsCell = row.insertCell();
-                    actionsCell.className = 'actions';
+                    const actionsCell = document.createElement('td');
                     
                     // Edit button
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Edit';
-                    editButton.className = 'btn btn-edit';
-                    editButton.onclick = () => openModal(station);
-                    actionsCell.appendChild(editButton);
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn btn-edit';
+                    editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                    editBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        openModal(station);
+                    };
                     
                     // Delete button
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Delete';
-                    deleteButton.className = 'btn btn-delete';
-                    deleteButton.onclick = () => showDeleteConfirmation(station);
-                    actionsCell.appendChild(deleteButton);
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-delete';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        showDeleteConfirmation(station);
+                    };
+                    
+                    actionsCell.appendChild(editBtn);
+                    actionsCell.appendChild(deleteBtn);
+                    
+                    // Append cells to row
+                    row.appendChild(titleCell);
+                    row.appendChild(cityCell);
+                    row.appendChild(websiteCell);
+                    row.appendChild(actionsCell);
+                    
+                    // Add row to fragment
+                    fragment.appendChild(row);
                 });
+                
+                // Clear the table body and append the fragment
+                tbody.innerHTML = '';
+                tbody.appendChild(fragment);
                 
             } catch (error) {
                 console.error('Error rendering table:', error);
@@ -1297,23 +1380,30 @@
             stationModal.style.display = 'none';
         }
 
-        function saveStation() {
-            if (!isAuthenticated) {
-                showPasswordModal();
-                return;
-            }
+        // Track if we're currently saving to prevent double saves
+        let isSaving = false;
+
+        async function saveStation() {
+            // Prevent double saves
+            if (isSaving) return;
+            isSaving = true;
             
-            const id = document.getElementById('stationId').value;
-            const title = document.getElementById('stationTitle').value.trim();
-            const city = document.getElementById('stationCity').value.trim();
-            const website = document.getElementById('stationWebsite').value.trim();
-
-            if (!title) {
-                alert('Title is required');
-                return;
-            }
-
             try {
+                if (!isAuthenticated) {
+                    showPasswordModal();
+                    return;
+                }
+                
+                const id = document.getElementById('stationId').value;
+                const title = document.getElementById('stationTitle').value.trim();
+                const city = document.getElementById('stationCity').value.trim();
+                const website = document.getElementById('stationWebsite').value.trim();
+
+                if (!title) {
+                    alert('Title is required');
+                    return;
+                }
+
                 if (id) {
                     // Update existing station
                     const index = stations.findIndex(s => s.id === id);
@@ -1326,23 +1416,94 @@
                         };
                     }
                 } else {
+                    // Normalize the input title for comparison
+                    const normalizedInput = title.trim().toLowerCase();
+                    
+                    // Check for duplicate station (case-insensitive, trimmed)
+                    const exists = stations.some(s => 
+                        s.title && s.title.trim().toLowerCase() === normalizedInput
+                    );
+                    
+                    if (exists) {
+                        console.log('Duplicate station detected:', { 
+                            inputTitle: title,
+                            normalizedInput,
+                            existingTitles: stations.map(s => s.title)
+                        });
+                        alert('A station with this title already exists');
+                        return;
+                    }
+                    
                     // Add new station
                     const newId = Date.now().toString();
-                    stations.push({ 
+                    const newStation = { 
                         id: newId, 
                         title, 
                         city: city || 'N/A', 
                         website: website || '',
                         guid: website || newId
-                    });
+                    };
+                    stations.push(newStation);
                 }
                 
+                // Sort stations alphabetically by title
+                stations.sort((a, b) => a.title.localeCompare(b.title));
+                
+                // Save to localStorage and update XML
+                await saveStations();
+                
+                // Re-render the table to show changes
                 renderTable();
+                
+                // Close the modal
                 closeModal();
+                
             } catch (error) {
                 console.error('Error saving station:', error);
                 alert('An error occurred while saving the station');
+            } finally {
+                isSaving = false;
             }
+        }
+        
+        async function saveStations() {
+            try {
+                // Update the XML data
+                console.log('[XML DEBUG] Generating XML...');
+                const xmlContent = await updateXML();
+                console.log('[XML DEBUG] XML generated:', xmlContent);
+                if (!xmlContent) {
+                    throw new Error('Failed to generate XML');
+                }
+                
+                // Save to the server
+                console.log('[XML DEBUG] Sending XML to server...');
+                const response = await fetch('/api/xml', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/xml'
+                    },
+                    body: xmlContent
+                });
+                console.log('[XML DEBUG] Server response:', response.status, response.statusText);
+                const respText = await response.text();
+                console.log('[XML DEBUG] Server response body:', respText);
+
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText} | Body: ${respText}`);
+                }
+
+                // Optionally update the UI or state here
+                await loadStationsFromServer();
+                renderTable();
+                showToast('Stations saved successfully!', 'success');
+            } catch (error) {
+                console.error('[XML DEBUG] Failed to save stations:', error);
+                showToast(`Failed to save changes: ${error.message}`, 'error');
+            } finally {
+                console.log('[XML DEBUG] Finished saving stations');
+            }
+            return false;
         }
 
         let stationToDelete = null;
@@ -1354,25 +1515,29 @@
             }
             
             stationToDelete = station;
-            document.getElementById('stationToDeleteName').textContent = station.title || 'this station';
+            const confirmationText = document.getElementById('deleteConfirmationText');
+            confirmationText.textContent = `Are you sure you want to delete "${station.title || 'this station'}"? This action cannot be undone.`;
             document.getElementById('deleteConfirmModal').style.display = 'block';
         }
-
-        function deleteStation() {
-            if (!isAuthenticated) {
-                showPasswordModal();
-                return;
-            }
+        
+        async function deleteStation() {
+            if (!stationToDelete) return;
             
-            if (stationToDelete) {
-                try {
-                    stations = stations.filter(s => s.id !== stationToDelete.id);
-                    renderTable();
-                    closeDeleteModal();
-                } catch (error) {
-                    console.error('Error deleting station:', error);
-                    alert('An error occurred while deleting the station');
-                }
+            try {
+                // Filter out the station to delete
+                stations = stations.filter(s => s.id !== stationToDelete.id);
+                
+                // Save changes
+                await saveStations();
+                
+                // Update the UI
+                renderTable();
+                closeDeleteModal();
+            } catch (error) {
+                console.error('Error deleting station:', error);
+                alert('An error occurred while deleting the station');
+            } finally {
+                stationToDelete = null;
             }
         }
 
@@ -1392,11 +1557,10 @@
             lastBuildDate: new Date().toUTCString()
         };
 
-        function generateXML() {
+        async function updateXML() {
+            console.log('[XML DEBUG] updateXML called. stations:', stations);
             try {
-                // Use the parsed channel info or fall back to defaults
                 const channelInfo = window.originalChannelInfo || defaultChannelInfo;
-                
                 let xmlString = `<?xml version="1.0" encoding="UTF-8"?>\n`;
                 xmlString += `<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">\n`;
                 xmlString += `  <channel>\n`;
@@ -1405,109 +1569,61 @@
                 xmlString += `    <atom:link href="${escapeXml(channelInfo.atomLink)}" rel="self" type="application/rss+xml"/>\n`;
                 xmlString += `    <description>${escapeXml(channelInfo.description)}</description>\n`;
                 xmlString += `    <language>${escapeXml(channelInfo.language || 'en-us')}</language>\n`;
-                xmlString += `    <pubDate>${escapeXml(channelInfo.pubDate || new Date().toUTCString())}</pubDate>\n`;
-                xmlString += `    <lastBuildDate>${escapeXml(channelInfo.lastBuildDate || new Date().toUTCString())}</lastBuildDate>\n`;
+                xmlString += `    <pubDate>${escapeXml(new Date().toUTCString())}</pubDate>\n`;
+                xmlString += `    <lastBuildDate>${escapeXml(new Date().toUTCString())}</lastBuildDate>\n`;
 
-                // Add stations
+                // Add stations sorted alphabetically by title
                 if (stations && stations.length > 0) {
-                    stations.forEach(station => {
-                        if (station.title) {  // Only include stations with a title
+                    const sortedStations = [...stations].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+                    sortedStations.forEach(station => {
+                        if (station && station.title) {
                             xmlString += `    <item>\n`;
                             xmlString += `      <title>${escapeXml(station.title)}</title>\n`;
-                            
-                            // Handle website/link
                             const link = station.website || station.link || '';
                             if (link) {
                                 xmlString += `      <link>${escapeXml(link)}</link>\n`;
                             }
-                            
-                            // Handle city/description
                             const description = station.city || station.description || '';
                             if (description) {
                                 xmlString += `      <description>${escapeXml(description)}</description>\n`;
                             }
-                            
-                            // Generate a GUID if none exists
                             const guid = station.guid || station.id || link || `station-${Date.now()}`;
                             xmlString += `      <guid isPermaLink="${guid.startsWith('http') ? 'true' : 'false'}">${escapeXml(guid)}</guid>\n`;
-                            
                             xmlString += `    </item>\n`;
                         }
                     });
                 }
-
                 xmlString += `  </channel>\n`;
                 xmlString += `</rss>`;
-                
+                // Store in localStorage for persistence
+                if (typeof Storage !== 'undefined') {
+                    localStorage.setItem('pacificaStations', JSON.stringify(stations));
+                    localStorage.setItem('pacificaLastUpdated', new Date().toISOString());
+                }
+                console.log('[XML DEBUG] Generated XML string:', xmlString);
                 return xmlString;
             } catch (error) {
-                console.error('Error generating XML:', error);
+                console.error('[XML DEBUG] Error updating XML:', error);
                 return null;
             }
         }
 
-        function escapeXml(unsafe) {
-            if (typeof unsafe !== 'string') {
-                return unsafe;
-            }
-            return unsafe.replace(/[<>&'"]/g, function (c) {
-                switch (c) {
-                    case '<': return '&lt;';
-                    case '>': return '&gt;';
-                    case '&': return '&amp;';
-                    case '\'': return '&apos;';
-                    case '"': return '&quot;';
-                }
-            });
-        }
-
-        function downloadXML() {
-            if (!isAuthenticated) {
-                showPasswordModal();
-                return;
-            }
-            
-            try {
-                const xmlData = generateXML();
-                if (!xmlData) {
-                    alert("No XML data to download. Please add some stations first.");
-                    return;
-                }
-                
-                const blob = new Blob([xmlData], { type: 'application/xml' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'pacifica_affiliates_updated.xml';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error('Error generating/downloading XML:', error);
-                alert('An error occurred while generating the XML file');
-            }
-        }
-
-        // Set up event listeners
-        document.getElementById('addStationBtn').onclick = () => openModal();
-        document.getElementById('saveStationBtn').onclick = saveStation;
-        document.getElementById('cancelModalBtn').onclick = closeModal;
-        document.getElementById('saveXmlBtn').onclick = () => {
-            const xmlData = generateXML();
-            xmlOutputTextarea.value = xmlData;
-            xmlOutputContainer.style.display = 'block';
-        };
-        document.getElementById('downloadXmlBtn').onclick = downloadXML;
+        // Set up event listeners - Moved to DOMContentLoaded to prevent duplicates
 
         // Set up delete confirmation modal
         const deleteConfirmModal = document.getElementById('deleteConfirmModal');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-        const stationToDeleteName = document.getElementById('stationToDeleteName');
         
-        confirmDeleteBtn.onclick = deleteStation;
-        cancelDeleteBtn.onclick = closeDeleteModal;
+        confirmDeleteBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteStation();
+        });
+        
+        cancelDeleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeDeleteModal();
+        });
 
         // Close modal if escape key is pressed
         window.addEventListener('keydown', function (event) {
@@ -1589,7 +1705,8 @@
             
             // Make sure stations are loaded and rendered
             if (!stations || stations.length === 0) {
-                stations = parseXML(initialXmlData);
+                console.log('[XML DEBUG] Using initialXmlData as fallback for stations parse:', initialXmlData);
+                stations = parseXML(initialXmlData); // Only use as fallback, never assign to it
             }
             renderTable();
         }
@@ -1686,44 +1803,102 @@
             });
         });
         
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', () => {
-            // Parse the XML data first
-            stations = parseXML(initialXmlData);
-            
-            // Initialize authentication
-            initAuth();
-            
-            // Set up event listeners for the app
-            setupEventListeners();
-        });
-        
-        function setupEventListeners() {
-            // Add Station button
-            document.getElementById('addStationBtn').addEventListener('click', () => openModal());
-            
-            // Save Station button
-            document.getElementById('saveStationBtn').addEventListener('click', saveStation);
-            
-            // Cancel Modal button
-            document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
-            
-            // Download XML button
-            document.getElementById('downloadXmlBtn').addEventListener('click', downloadXML);
-            
-            // Delete confirmation
-            document.getElementById('confirmDeleteBtn').addEventListener('click', deleteStation);
-            
-            // Close modals when clicking outside
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
+        // Track if initialization has been done
+        let isInitialized = false;
+
+        // Initialize the app when the DOM is fully loaded
+        async function loadStationsFromServer() {
+            try {
+                const response = await fetch('/api/xml');
+                if (!response.ok) {
+                    throw new Error(`Failed to load stations: ${response.status} ${response.statusText}`);
+                }
+                const xmlContent = await response.text();
+                stations = parseXML(xmlContent) || [];
+                renderTable();
+                return true;
+            } catch (error) {
+                console.error('Error loading stations from server:', error);
+                // Fall back to localStorage if available
+                if (typeof Storage !== 'undefined') {
+                    const savedStations = localStorage.getItem('pacificaStations');
+                    if (savedStations) {
+                        stations = JSON.parse(savedStations);
+                        renderTable();
+                        return true;
                     }
-                });
-            });
+                }
+                alert('Failed to load stations. Please check your connection and refresh the page.');
+                return false;
+            }
         }
 
+        // Initialize the application
+        async function initializeApp() {
+            try {
+                // Only initialize once
+                if (isInitialized) return;
+                isInitialized = true;
+                
+                // Set up event delegation first
+                setupEventDelegation();
+                
+                // Initialize auth state
+                initAuth();
+                
+                // Check authentication
+                const savedPassword = localStorage.getItem(PASSWORD_KEY);
+                if (savedPassword) {
+                    isAuthenticated = true;
+                    enableApp();
+                    // Load stations from server
+                    await loadStationsFromServer();
+                    renderTable();
+                } else {
+                    // Set default password
+                    const defaultPassword = 'admin123';
+                    await changePassword(defaultPassword);
+                    isAuthenticated = true;
+                    enableApp();
+                    await loadStationsFromServer();
+                    renderTable();
+                    alert(`No password was set. A default password has been set to: ${defaultPassword}\n\nPlease change this to a secure password in the admin settings.`);
+                }
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Failed to initialize application. Please check console for details.');
+            }
+        }
+
+        // Start the application when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Load stations from server
+        async function loadStations() {
+            try {
+                // Try to load from localStorage first
+                if (typeof Storage !== 'undefined') {
+                    const savedStations = localStorage.getItem('pacificaStations');
+                    if (savedStations) {
+                        stations = JSON.parse(savedStations);
+                        console.log('Loaded stations from localStorage:', stations.length);
+                    }
+                }
+                
+                // If no stations in localStorage, load from initial XML
+                if (!stations || stations.length === 0) {
+                    if (initialXmlData) {
+                        console.log('[XML DEBUG] Using initialXmlData as fallback for stations parse:', initialXmlData);
+                        stations = parseXML(initialXmlData) || []; // Only use as fallback, never assign to it
+                        renderTable();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading stations:', error);
+            }
+        }
+
+        loadStations();
     </script>
 </body>
 </html>

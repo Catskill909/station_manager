@@ -1,0 +1,1991 @@
+>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Station Manager</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: #080808; /* Even darker black */
+            color: #cccccc; /* Slightly softer light grey text */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #181818; /* Darker grey for header */
+            color: #e0e0e0;
+            padding: 25px 0;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.65); /* Softer, more diffused */
+            border-bottom: 1px solid #282828; /* Darker subtle border */
+            position: relative;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 60px; /* Add padding for the logout button */
+        }
+        header h1 {
+            margin: 0;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 2.8em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #e8e8e8; /* Bright off-white for title */
+        }
+        .controls {
+            margin: 20px auto; /* Center the controls */
+            text-align: center; /* Center the button */
+            max-width: 1200px; /* Match container width */
+            padding: 0 30px; /* Match container padding */
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto 25px; /* Adjusted margin to bring content up */
+            background-color: #1c1c1c; /* Very dark container background */
+            padding: 30px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.7); /* Deeper shadow */
+            border-radius: 8px; /* Softer modern look */
+            border: 1px solid #2a2a2a; /* Darker subtle border */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #333333; /* Dark grey border */
+            padding: 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #222222; /* Darker grey for table header */
+            color: #e0e0e0; /* Brighter for better contrast */
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+        }
+        tr:nth-child(even) {
+            background-color: #1f1f1f; /* Subtle difference for even rows */
+        }
+        tr:hover {
+            background-color: #282828; /* Dark hover for rows */
+        }
+        td a {
+            color: #ababab; /* Medium grey for links */
+            text-decoration: none;
+            font-weight: 500;
+        }
+        td a:hover {
+            text-decoration: underline;
+            color: #c0c0c0; /* Lighter grey on hover */
+        }
+        .actions button, .btn {
+            padding: 10px 16px;
+            margin-right: 8px;
+            border: 1px solid #404040; /* Medium-dark grey border for buttons */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease, color 0.15s ease;
+            text-transform: none; /* Changed from uppercase to normal text */
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            background-color: #2b2b2b; /* Dark base for buttons */
+            color: #e0e0e0; /* Lighter text for better contrast */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .actions button:hover, .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            background-color: #353535; /* Slightly lighter on hover */
+            border-color: #505050;
+        }
+        .btn-add { /* Specific styling for Add New Station button */
+            background-color: #e0e0e0; /* Light background to stand out */
+            color: #181818; /* Dark text for contrast */
+            border: 1px solid #e0e0e0; /* Border matching background */
+            padding: 12px 20px; /* Generous padding */
+            font-size: 1em; /* Slightly larger font */
+            margin-bottom: 30px; /* Space below the button */
+            display: inline-block; /* To respect margin and padding properly */
+            box-shadow: 0 2px 4px rgba(224, 224, 224, 0.2); /* Subtle glow effect */
+        }
+        .btn-add:hover {
+            background-color: #f0f0f0; /* Lighter on hover */
+            color: #080808;
+            border-color: #f0f0f0;
+            box-shadow: 0 3px 6px rgba(224, 224, 224, 0.3);
+        }
+        .actions button:active, .btn:active { /* Active state for all buttons */
+            transform: translateY(1px); /* Slight press down effect */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5); /* Reduced shadow on press */
+        }
+        ::selection { /* Custom text selection styling */
+            background-color: #555555; /* Dark grey selection */
+            color: #e8e8e8; /* Light text for selected content */
+        }
+        /* Primary/accent action buttons: slightly lighter background or border */
+        .btn-save-xml, .btn-save, #downloadXmlBtn {
+            background-color: #383838; /* A step lighter for emphasis */
+            color: #e0e0e0;
+            border-color: #555555;
+        }
+        .btn-save-xml:hover, .btn-save:hover, #downloadXmlBtn:hover {
+            background-color: #424242;
+            border-color: #606060;
+        }
+        /* Edit and Cancel buttons can use the default .btn style or a slight variation */
+        .btn-edit, .btn-cancel {
+            background-color: #2b2b2b;
+            border-color: #404040;
+        }
+        .btn-edit:hover, .btn-cancel:hover {
+            background-color: #353535;
+            border-color: #505050;
+        }
+        /* Delete button: can be subtly different, e.g. darker or specific border */
+        .btn-delete {
+            background-color: #2b2b2b; /* Standard dark button */
+            color: #c06060; /* Subtle desaturated red text for delete indication */
+            border-color: #404040; /* Standard border */
+        }
+        .btn-delete:hover {
+            background-color: #353535;
+            color: #d07070; /* Brighter subtle red on hover */
+            border-color: #505050;
+        }
+
+        /* Header Styles */
+        .btn-admin {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn-admin:hover {
+            background-color: #444;
+        }
+
+        .admin-menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .admin-menu-options button {
+            width: 100%;
+            text-align: left;
+            padding: 10px 15px;
+        }
+
+        #downloadXmlBtn {
+            margin: 20px auto; /* Center the button */
+            display: block; /* Make it a block to center with auto margins */
+            background-color: #4a6da7;
+            color: white;
+            border: none;
+            padding: 12px 24px; /* Add some padding */
+            font-size: 1.1em; /* Slightly larger text */
+            border-radius: 4px; /* Match other buttons */
+            cursor: pointer; /* Show pointer on hover */
+            transition: background-color 0.2s ease; /* Smooth hover effect */
+        }
+        
+        #downloadXmlBtn:hover {
+            background-color: #3a5d9e; /* Slightly darker on hover */
+        }
+
+        .password-strength {
+            height: 5px;
+            background-color: #2b2b2b;
+            margin: 10px 0 20px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        #passwordStrength {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .error-message {
+            background-color: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9); /* Very dark overlay */
+        }
+        .modal-content {
+            background-color: #1f1f1f; /* Dark modal background, same as container */
+            margin: 8% auto;
+            padding: 35px;
+            border: 1px solid #333333; /* Darker border */
+            width: 85%;
+            max-width: 600px;
+            border-radius: 8px; /* Softer modern look */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8); /* Stronger shadow */
+            color: #cccccc;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #e8e8e8; /* Bright off-white */
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            font-size: 1.8em;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 15px;
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #bbbbbb; /* Lighter grey for labels */
+            font-size: 0.95em;
+        }
+        .modal-content input[type="text"] {
+            width: calc(100% - 26px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #383838; /* Dark grey border for inputs */
+/* Delete Confirmation Modal Specific Styles */
+        #deleteConfirmModal .modal-content {
+            max-width: 450px; /* Slightly smaller for confirmation */
+        }
+        #deleteConfirmModal p {
+            font-size: 1.05em;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            color: #cccccc;
+        }
+        #deleteConfirmModal .btn-delete { /* Make the delete button in modal more prominent */
+            background-color: #c06060; /* Subtle desaturated red */
+            color: #080808; /* Dark text for contrast */
+            border-color: #c06060;
+        }
+        #deleteConfirmModal .btn-delete:hover {
+            background-color: #d07070;
+            border-color: #d07070;
+            color: #000000;
+        }
+        #deleteConfirmModal .btn-cancel { /* Standard cancel button */
+             background-color: #383838;
+             color: #e0e0e0;
+             border-color: #555555;
+        }
+        #deleteConfirmModal .btn-cancel:hover {
+            background-color: #424242;
+            border-color: #606060;
+        }
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #282828; /* Dark input background */
+            color: #cccccc;
+            font-size: 1em;
+        }
+        .modal-content input[type="text"]:focus {
+            border-color: #555555; /* Lighter grey for focus */
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(100, 100, 100, 0.3); /* Subtle grey shadow */
+        }
+        #xmlOutputContainer {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: #161616; /* Even darker for XML output */
+            color: #b0b0b0; /* Softer grey for XML text */
+            border: 1px solid #282828;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        #xmlOutputContainer h3 {
+            color: #d8d8d8; /* Light grey for XML heading */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            font-size: 1.4em;
+            border-bottom: 1px solid #282828;
+            padding-bottom: 10px;
+        }
+        #xmlOutput {
+            white-space: pre;
+            font-family: 'Consolas', 'Monaco', 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            border: none;
+            background: none;
+            color: #a0a0a0; /* Darker grey for XML content */
+            width: 100%;
+            min-height: 300px;
+            resize: vertical;
+            outline: none;
+        }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Radio Station Manager</h1>
+            <button id="logoutBtn" class="btn btn-admin" style="display: none;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+    
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h2>Enter Password</h2>
+            <div id="passwordError" class="error-message" style="display: none; color: #ff6b6b; margin: 10px 0; padding: 8px; background: rgba(255,0,0,0.1); border-radius: 4px;"></div>
+            <input type="password" id="passwordInput" placeholder="Enter password" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #fff;">
+            <div class="modal-buttons">
+                <button id="submitPasswordBtn" class="btn btn-save">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <h2>Change Password</h2>
+            <div id="changePasswordError" class="error-message" style="display: none; color: #ff6b6b; margin: 10px 0; padding: 8px; background: rgba(255,0,0,0.1); border-radius: 4px;"></div>
+            <input type="password" id="newPasswordInput" placeholder="New password" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #fff;">
+            <input type="password" id="confirmPasswordInput" placeholder="Confirm new password" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #fff;">
+            <div class="modal-buttons">
+                <button id="savePasswordBtn" class="btn btn-save">Save</button>
+                <button id="cancelPasswordBtn" class="btn btn-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="margin: 20px 0;">
+            <button id="addStationBtn" class="btn btn-add">
+                <i class="fas fa-plus"></i> Add New Station
+            </button>
+        </div>
+        <form id="stationForm" onsubmit="event.preventDefault();">
+            <table id="stationsTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>City</th>
+                        <th>Website</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Station data will be populated here by JavaScript -->
+                </tbody>
+            </table>
+        </form>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Station data will be populated here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for Add/Edit Station -->
+    <div id="stationModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Add Station</h2>
+            <input type="hidden" id="stationId">
+            <label for="stationTitle">Title:</label>
+            <input type="text" id="stationTitle" name="title">
+
+            <label for="stationCity">City (e.g., Brooklyn, NY):</label>
+            <input type="text" id="stationCity" name="city">
+
+            <label for="stationWebsite">Website URL:</label>
+            <input type="text" id="stationWebsite" name="website">
+
+            <div class="modal-buttons">
+                <button id="saveStationBtn" class="btn btn-save">Save</button>
+                <button id="cancelModalBtn" class="btn btn-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+<!-- Modal for Delete Confirmation -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirm Delete</h3>
+            <p id="deleteConfirmationText">Are you sure you want to delete this station?</p>
+            <div class="modal-actions">
+                <button id="cancelDeleteBtn" class="btn btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button id="confirmDeleteBtn" class="btn btn-delete">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const initialXmlData = `<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<channel>
+<title>Pacifica Network Affiliates</title>
+<link>https://pacificanetwork.org/stations-2/</link>
+<atom:link href="https://starkey.digital/pacifica/pacifica_affiliates.xml" rel="self" type="application/rss+xml"/>
+<description>List of Pacifica Network affiliate stations</description>
+<lastBuildDate>Thu, 17 Apr 2025 23:11:30 +0000</lastBuildDate>
+<item>
+<title>AfroBeat Radio</title>
+<link>http://afrobeatradio.org/</link>
+<description>Brooklyn, NY</description>
+<guid>http://afrobeatradio.org/</guid>
+</item>
+<item>
+<title>Beware the Radio</title>
+<link>https://bewaretheradio.com/</link>
+<description>London, Great Britain</description>
+<guid>https://bewaretheradio.com/</guid>
+</item>
+<item>
+<title>Diaspora Radio</title>
+<link>http://www.cdradio.us/</link>
+<description>Portland, ME</description>
+<guid>http://www.cdradio.us/</guid>
+</item>
+<item>
+<title>CGR Radio</title>
+<link>https://cgrradio2.wixsite.com/cgrradio</link>
+<description>Vancouver, Canada</description>
+<guid>https://cgrradio2.wixsite.com/cgrradio</guid>
+</item>
+<item>
+<title>CHMR</title>
+<link>https://chmrfm.weebly.com/</link>
+<description>St. John's, NL</description>
+<guid>https://chmrfm.weebly.com/</guid>
+</item>
+<item>
+<title>CJUM</title>
+<link>http://www.umfm.com/</link>
+<description>Winnipeg, MB</description>
+<guid>http://www.umfm.com/</guid>
+</item>
+<item>
+<title>CKUT</title>
+<link>http://ckut.ca/c/</link>
+<description>Montreal, QU</description>
+<guid>http://ckut.ca/c/</guid>
+</item>
+<item>
+<title>GCR/Global</title>
+<link>http://globalcommunityradio.blogspot.com/</link>
+<description>Geneva, NY</description>
+<guid>http://globalcommunityradio.blogspot.com/</guid>
+</item>
+<item>
+<title>KACR</title>
+<link>http://alamedacommunityradio.org/</link>
+<description>Alameda, CA</description>
+<guid>http://alamedacommunityradio.org/</guid>
+</item>
+<item>
+<title>KAKU</title>
+<link>https://www.akaku.org/kaku-88-5-fm/</link>
+<description>Kahului, HI</description>
+<guid>https://www.akaku.org/kaku-88-5-fm/</guid>
+</item>
+<item>
+<title>KAPY</title>
+<link>http://valley1049.org/</link>
+<description>Duvall, WA</description>
+<guid>http://valley1049.org/</guid>
+</item>
+<item>
+<title>KAOS</title>
+<link>http://www.kaosradio.org/</link>
+<description>Olympia, WA</description>
+<guid>http://www.kaosradio.org/</guid>
+</item>
+<item>
+<title>KBBF</title>
+<link>https://kbbf.org/</link>
+<description>Santa Rosa, CA</description>
+<guid>https://kbbf.org/</guid>
+</item>
+<item>
+<title>KBCS</title>
+<link>http://kbcs.fm/</link>
+<description>Bellevue, WA</description>
+<guid>http://kbcs.fm/</guid>
+</item>
+<item>
+<title>KBCU</title>
+<link>http://www.bethelks.edu/KBCU/</link>
+<description>North Newton, KS</description>
+<guid>http://www.bethelks.edu/KBCU/</guid>
+</item>
+<item>
+<title>KBOG</title>
+<link>https://kbog.org/</link>
+<description>Bandon Beach, OR</description>
+<guid>https://kbog.org/</guid>
+</item>
+<item>
+<title>KBOO</title>
+<link>http://kboo.fm/</link>
+<description>Portland, OR</description>
+<guid>http://kboo.fm/</guid>
+</item>
+<item>
+<title>KBRP</title>
+<link>http://www.kbrpradio.com/</link>
+<description>Bisbee, AZ</description>
+<guid>http://www.kbrpradio.com/</guid>
+</item>
+<item>
+<title>KBUT</title>
+<link>https://www.kbut.org/19270</link>
+<description>Crested Butte, CO</description>
+<guid>https://www.kbut.org/19270</guid>
+</item>
+<item>
+<title>KCBP</title>
+<link>http://www.facebook.com/KCBPcommunityradio/</link>
+<description>Modesto, CA</description>
+<guid>http://www.facebook.com/KCBPcommunityradio/</guid>
+</item>
+<item>
+<title>KCEI</title>
+<link>http://culturalenergy.org/</link>
+<description>Taos, NM</description>
+<guid>http://culturalenergy.org/</guid>
+</item>
+<item>
+<title>KCIW</title>
+<link>http://kciw.org/</link>
+<description>Brookings, OR</description>
+<guid>http://kciw.org/</guid>
+</item>
+<item>
+<title>KCPK</title>
+<link>http://www.cfcninc.org/</link>
+<description>Pine Mnt Club, CA</description>
+<guid>http://www.cfcninc.org/</guid>
+</item>
+<item>
+<title>KCSB</title>
+<link>http://www.kcsb.org/</link>
+<description>Santa Barbara, CA</description>
+<guid>http://www.kcsb.org/</guid>
+</item>
+<item>
+<title>KCXU</title>
+<link>https://kcxu.org/</link>
+<description>San Jose, CA</description>
+<guid>https://kcxu.org/</guid>
+</item>
+<item>
+<title>KDRT</title>
+<link>http://kdrt.org/</link>
+<description>Davis, CA</description>
+<guid>http://kdrt.org/</guid>
+</item>
+<item>
+<title>KDUR</title>
+<link>http://www.kdur.org/</link>
+<description>Durango, CO</description>
+<guid>http://www.kdur.org/</guid>
+</item>
+<item>
+<title>KDVS</title>
+<link>http://www.kdvs.org/</link>
+<description>Davis, CA</description>
+<guid>http://www.kdvs.org/</guid>
+</item>
+<item>
+<title>KEOS</title>
+<link>http://www.keos.org/shtml/index.shtml</link>
+<description>College Station, TX</description>
+<guid>http://www.keos.org/shtml/index.shtml</guid>
+</item>
+<item>
+<title>KEPJ</title>
+<link>https://esperanzacenter.org/esperanza-projects/radio-esperanza/</link>
+<description>San Antonio, TX</description>
+<guid>https://esperanzacenter.org/esperanza-projects/radio-esperanza/</guid>
+</item>
+<item>
+<title>KEPW</title>
+<link>http://kepw.org</link>
+<description>Eugene, OR</description>
+<guid>http://kepw.org</guid>
+</item>
+<item>
+<title>KEUL</title>
+<link>http://www.glaciercity.us/</link>
+<description>Girdwood, AK</description>
+<guid>http://www.glaciercity.us/</guid>
+</item>
+<item>
+<title>KFOI</title>
+<link>http://www.KFOIradio.org</link>
+<description>Redding, CA</description>
+<guid>http://www.KFOIradio.org</guid>
+</item>
+<item>
+<title>KFTN</title>
+<link>https://kftn927.com/</link>
+<description>Fenton, MO</description>
+<guid>https://kftn927.com/</guid>
+</item>
+<item>
+<title>KFUG</title>
+<link>http://kfugradio.org/wordpress1/</link>
+<description>Crescent City, CA</description>
+<guid>http://kfugradio.org/wordpress1/</guid>
+</item>
+<item>
+<title>KFZR</title>
+<link>http://www.facebook.com/KFZR93.3</link>
+<description>Frazier Park, CA</description>
+<guid>http://www.facebook.com/KFZR93.3</guid>
+</item>
+<item>
+<title>KGHI</title>
+<link>http://www.kghifm.org/</link>
+<description>Westport, WA</description>
+<guid>http://www.kghifm.org/</guid>
+</item>
+<item>
+<title>KGLP</title>
+<link>http://www.kglp.org/</link>
+<description>Gallup, NM</description>
+<guid>http://www.kglp.org/</guid>
+</item>
+<item>
+<title>KGNU</title>
+<link>http://www.kgnu.org/</link>
+<description>Boulder, CO</description>
+<guid>http://www.kgnu.org/</guid>
+</item>
+<item>
+<title>KGUA</title>
+<link>http://www.kgua.org/</link>
+<description>Gualala, CA</description>
+<guid>http://www.kgua.org/</guid>
+</item>
+<item>
+<title>KGVM</title>
+<link>http://www.KGVM.org</link>
+<description>Bozeman, MT</description>
+<guid>http://www.KGVM.org</guid>
+</item>
+<item>
+<title>KHEN</title>
+<link>http://www.khen.org/</link>
+<description>Salida, CO</description>
+<guid>http://www.khen.org/</guid>
+</item>
+<item>
+<title>KHOI</title>
+<link>http://www.khoifm.org/</link>
+<description>Ames, IA</description>
+<guid>http://www.khoifm.org/</guid>
+</item>
+<item>
+<title>KIDE</title>
+<link>http://www.kidefm.org/home/</link>
+<description>Hoopa, CA</description>
+<guid>http://www.kidefm.org/home/</guid>
+</item>
+<item>
+<title>KJZX</title>
+<link>https://jazzatx.org/</link>
+<description>Austin, TX</description>
+<guid>https://jazzatx.org/</guid>
+</item>
+<item>
+<title>KKFI</title>
+<link>http://www.kkfi.org/</link>
+<description>Kansas City, MO</description>
+<guid>http://www.kkfi.org/</guid>
+</item>
+<item>
+<title>KKRN</title>
+<link>http://kkrn.org/</link>
+<description>Montgomery Creek, CA</description>
+<guid>http://kkrn.org/</guid>
+</item>
+<item>
+<title>KKWE</title>
+<link>http://www.niijiiradio.com/</link>
+<description>Callaway, MN</description>
+<guid>http://www.niijiiradio.com/</guid>
+</item>
+<item>
+<title>KLOI</title>
+<link>http://www.kloi.org/</link>
+<description>Lopez Island, WA</description>
+<guid>http://www.kloi.org/</guid>
+</item>
+<item>
+<title>KMRE</title>
+<link>http://www.kmre.org//</link>
+<description>Bellingham, WA</description>
+<guid>http://www.kmre.org//</guid>
+</item>
+<item>
+<title>KMUD</title>
+<link>http://www.kmud.org/</link>
+<description>Redway, CA</description>
+<guid>http://www.kmud.org/</guid>
+</item>
+<item>
+<title>KMUN</title>
+<link>http://coastradio.org/</link>
+<description>Astoria, OR</description>
+<guid>http://coastradio.org/</guid>
+</item>
+<item>
+<title>KNFS</title>
+<link>https://radio-locator.com/info/KNFS-FL</link>
+<description>Tulare, CA</description>
+<guid>https://radio-locator.com/info/KNFS-FL</guid>
+</item>
+<item>
+<title>KNIZ</title>
+<link>http://knizradio.org/</link>
+<description>Gallup, NM</description>
+<guid>http://knizradio.org/</guid>
+</item>
+<item>
+<title>KNSJ</title>
+<link>http://www.knsj.org//</link>
+<description>San Diego, CA</description>
+<guid>http://www.knsj.org//</guid>
+</item>
+<item>
+<title>KNVC</title>
+<link>https://knvc.org/</link>
+<description>Carson City, NV</description>
+<guid>https://knvc.org/</guid>
+</item>
+<item>
+<title>KOCF</title>
+<link>http://kocf.org/</link>
+<description>Veneta, OR</description>
+<guid>http://kocf.org/</guid>
+</item>
+<item>
+<title>KODX</title>
+<link>http://www.kodxseattle.org/</link>
+<description>Seattle, WA</description>
+<guid>http://www.kodxseattle.org/</guid>
+</item>
+<item>
+<title>KOPN</title>
+<link>http://www.kopn.org/</link>
+<description>Columbia, MO</description>
+<guid>http://www.kopn.org/</guid>
+</item>
+<item>
+<title>KORO</title>
+<link>https://koro.airtime.pro/</link>
+<description>Alameda, CA</description>
+<guid>https://koro.airtime.pro/</guid>
+</item>
+<item>
+<title>KOWN</title>
+<link>http://957fmtheboss.com/</link>
+<description>Omaha, NE</description>
+<guid>http://957fmtheboss.com/</guid>
+</item>
+<item>
+<title>KOYO</title>
+<link>http://www.koyo.fm</link>
+<description>Oroville, CA</description>
+<guid>http://www.koyo.fm</guid>
+</item>
+<item>
+<title>KOYS</title>
+<link>https://pnwradio.org/</link>
+<description>Eugene, Oregon</description>
+<guid>https://pnwradio.org/</guid>
+</item>
+<item>
+<title>KOYT</title>
+<link>http://963koyt.org/</link>
+<description>Anza, CA</description>
+<guid>http://963koyt.org/</guid>
+</item>
+<item>
+<title>KPOV</title>
+<link>http://kpov.org/</link>
+<description>Bend, OR</description>
+<guid>http://kpov.org/</guid>
+</item>
+<item>
+<title>KPPQ</title>
+<link>http://www.capsmedia.org/radio/</link>
+<description>Ventura, CA</description>
+<guid>http://www.capsmedia.org/radio/</guid>
+</item>
+<item>
+<title>KPRI</title>
+<link>http://www.rezradio.fm/</link>
+<description>Pala, CA</description>
+<guid>http://www.rezradio.fm/</guid>
+</item>
+<item>
+<title>KPSQ</title>
+<link>http://www.kpsq.org/</link>
+<description>Fayetteville, AR</description>
+<guid>http://www.kpsq.org/</guid>
+</item>
+<item>
+<title>KPTZ</title>
+<link>http://kptz.org</link>
+<description>Port Townsend, WA</description>
+<guid>http://kptz.org</guid>
+</item>
+<item>
+<title>KQRU</title>
+<link>https://kqru.org/</link>
+<description>Santa Clarita, CA</description>
+<guid>https://kqru.org/</guid>
+</item>
+<item>
+<title>KRBX</title>
+<link>http://www.radioboise.us/</link>
+<description>Boise, ID</description>
+<guid>http://www.radioboise.us/</guid>
+</item>
+<item>
+<title>KRDP</title>
+<link>https://radiophoenix.org/ways-to-listen/</link>
+<description>Phoenix, AZ</description>
+<guid>https://radiophoenix.org/ways-to-listen/</guid>
+</item>
+<item>
+<title>KRFP</title>
+<link>http://www.radiofreemoscow.com/</link>
+<description>Moscow, ID</description>
+<guid>http://www.radiofreemoscow.com/</guid>
+</item>
+<item>
+<title>KRFY</title>
+<link>http://www.krfy.org/</link>
+<description>Sandpoint, ID</description>
+<guid>http://www.krfy.org/</guid>
+</item>
+<item>
+<title>KROV</title>
+<link>http://www.krov.fm</link>
+<description>Oroville, CA</description>
+<guid>http://www.krov.fm</guid>
+</item>
+<item>
+<title>KRJF</title>
+<link>http://www.krjf.org/</link>
+<description>Santa Rosa, CA</description>
+<guid>http://www.krjf.org/</guid>
+</item>
+<item>
+<title>KRZA</title>
+<link>http://www.krzaradio.blogspot.com/</link>
+<description>Alamosa, CO</description>
+<guid>http://www.krzaradio.blogspot.com/</guid>
+</item>
+<item>
+<title>KSER</title>
+<link>http://www.kser.org/</link>
+<description>Everett, WA</description>
+<guid>http://www.kser.org/</guid>
+</item>
+<item>
+<title>KSFR</title>
+<link>http://www.ksfr.org/</link>
+<description>Santa Fe, NM</description>
+<guid>http://www.ksfr.org/</guid>
+</item>
+<item>
+<title>KSKQ</title>
+<link>http://www.kskq.org/</link>
+<description>Ashland, OR</description>
+<guid>http://www.kskq.org/</guid>
+</item>
+<item>
+<title>KSQD</title>
+<link>https://ksqd.org/</link>
+<description>Santa Cruz, CA</description>
+<guid>https://ksqd.org/</guid>
+</item>
+<item>
+<title>KSUA</title>
+<link>http://www.ksuaradio.com/</link>
+<description>Fairbanks, AK</description>
+<guid>http://www.ksuaradio.com/</guid>
+</item>
+<item>
+<title>KTAL</title>
+<link>https://www.lccommunityradio.org/</link>
+<description>Las Cruces, NM</description>
+<guid>https://www.lccommunityradio.org/</guid>
+</item>
+<item>
+<title>KSVR</title>
+<link>https://www.facebook.com/ksvr.fm/</link>
+<description>Mount Vernon, WA</description>
+<guid>https://www.facebook.com/ksvr.fm/</guid>
+</item>
+<item>
+<title>KTDE</title>
+<link>http://www.ktde.com/</link>
+<description>Gualala, CA</description>
+<guid>http://www.ktde.com/</guid>
+</item>
+<item>
+<title>KTWH</title>
+<link>http://ktwh.org/</link>
+<description>Two Harbors, MN</description>
+<guid>http://ktwh.org/</guid>
+</item>
+<item>
+<title>KUCR</title>
+<link>https://kucr.org/</link>
+<description>Riverside, CA</description>
+<guid>https://kucr.org/</guid>
+</item>
+<item>
+<title>KUGS</title>
+<link>http://as.wwu.edu/kugs/</link>
+<description>Bellingham, WA</description>
+<guid>http://as.wwu.edu/kugs/</guid>
+</item>
+<item>
+<title>KUNM</title>
+<link>http://kunm.org/</link>
+<description>Albuquerque, NM</description>
+<guid>http://kunm.org/</guid>
+</item>
+<item>
+<title>KUOI</title>
+<link>http://kuoi.org/</link>
+<description>Moscow, ID</description>
+<guid>http://kuoi.org/</guid>
+</item>
+<item>
+<title>KURU</title>
+<link>http://gmcr.org</link>
+<description>Silver City, NM</description>
+<guid>http://gmcr.org</guid>
+</item>
+<item>
+<title>KVMR</title>
+<link>http://www.kvmr.org/</link>
+<description>Nevada City, CA</description>
+<guid>http://www.kvmr.org/</guid>
+</item>
+<item>
+<title>KVSJ</title>
+<link>https://pjnsjc.org/the-voice-of-stockton/</link>
+<description>Stockton, CA</description>
+<guid>https://pjnsjc.org/the-voice-of-stockton/</guid>
+</item>
+<item>
+<title>KWCP</title>
+<link>https://www.facebook.com/KWCP98.9LPFM/</link>
+<description>Little Rock, AR</description>
+<guid>https://www.facebook.com/KWCP98.9LPFM/</guid>
+</item>
+<item>
+<title>KWRK</title>
+<link>http://www.kwrk.org/</link>
+<description>Fairbanks, AK</description>
+<guid>http://www.kwrk.org/</guid>
+</item>
+<item>
+<title>KWSI</title>
+<link>http://kwsi.org/</link>
+<description>Grand Junction, CO</description>
+<guid>http://kwsi.org/</guid>
+</item>
+<item>
+<title>KWTF</title>
+<link>http://kwtf.net/</link>
+<description>Santa Rosa, CA</description>
+<guid>http://kwtf.net/</guid>
+</item>
+<item>
+<title>KWVA</title>
+<link>http://kwva.uoregon.edu/</link>
+<description>Eugene, OR</description>
+<guid>http://kwva.uoregon.edu/</guid>
+</item>
+<item>
+<title>KXCI</title>
+<link>http://www.kxci.org/</link>
+<description>Tucson, AZ</description>
+<guid>http://www.kxci.org/</guid>
+</item>
+<item>
+<title>KXCJ</title>
+<link>http://kxcj.org/</link>
+<description>Cave Junction, OR</description>
+<guid>http://kxcj.org/</guid>
+</item>
+<item>
+<title>KXCR</title>
+<link>http://www.kxcr.net/</link>
+<description>Florence, OR</description>
+<guid>http://www.kxcr.net/</guid>
+</item>
+<item>
+<title>KYAQ</title>
+<link>http://www.kyaq.org/</link>
+<description>Newport, OR</description>
+<guid>http://www.kyaq.org/</guid>
+</item>
+<item>
+<title>KYBU</title>
+<link>https://kyburadio.org/</link>
+<description>Covelo, CA</description>
+<guid>https://kyburadio.org/</guid>
+</item>
+<item>
+<title>KYGT</title>
+<link>http://www.clearcreekradio.com/</link>
+<description>Idaho Springs, CO</description>
+<guid>http://www.clearcreekradio.com/</guid>
+</item>
+<item>
+<title>KYRS</title>
+<link>http://kyrs.org/</link>
+<description>Spokane, WA</description>
+<guid>http://kyrs.org/</guid>
+</item>
+<item>
+<title>KZAX</title>
+<link>https://www.makeshiftproject.com/kzax-949-radio/</link>
+<description>Bellingham, WA</description>
+<guid>https://www.makeshiftproject.com/kzax-949-radio/</guid>
+</item>
+<item>
+<title>KZFR</title>
+<link>http://www.kzfr.org/</link>
+<description>Chico, CA</description>
+<guid>http://www.kzfr.org/</guid>
+</item>
+<item>
+<title>KZGM</title>
+<link>http://www.kz88.org/</link>
+<description>Cabool, MO</description>
+<guid>http://www.kz88.org/</guid>
+</item>
+<item>
+<title>KZMU</title>
+<link>http://www.kzmu.org/</link>
+<description>Moab, UT</description>
+<guid>http://www.kzmu.org/</guid>
+</item>
+<item>
+<title>KZYX</title>
+<link>http://www.kzyx.org/</link>
+<description>Philo, CA</description>
+<guid>http://www.kzyx.org/</guid>
+</item>
+<item>
+<title>WLBH</title>
+<link>https://listenandbeheard.net/wlbh/</link>
+<description>Greenville, SC</description>
+<guid>https://listenandbeheard.net/wlbh/</guid>
+</item>
+<item>
+<title>NCCR</title>
+<link>http://northcountrycommunityradio.org/</link>
+<description>Littleton, NH</description>
+<guid>http://northcountrycommunityradio.org/</guid>
+</item>
+<item>
+<title>Planet Waves</title>
+<link>http://planetwaves.fm/</link>
+<description>Kingston, NY</description>
+<guid>http://planetwaves.fm/</guid>
+</item>
+<item>
+<title>Radio LoRa</title>
+<link>http://www.lora.ch/?view=featured</link>
+<description>Zurich, Switzerland</description>
+<guid>http://www.lora.ch/?view=featured</guid>
+</item>
+<item>
+<title>Radio Phoenix</title>
+<link>http://www.radiophoenix.org</link>
+<description>Tempe, AZ</description>
+<guid>http://www.radiophoenix.org</guid>
+</item>
+<item>
+<title>Radio Stratford</title>
+<link>http://radiostratford.com/</link>
+<description>Stratford, CT</description>
+<guid>http://radiostratford.com/</guid>
+</item>
+<item>
+<title>REC.FM</title>
+<link>https://recnet.com/</link>
+<description>Mardela Springs, MD</description>
+<guid>https://recnet.com/</guid>
+</item>
+<item>
+<title>Detour Network</title>
+<link>http://thedetour.us/</link>
+<description>Knoxville, TN</description>
+<guid>http://thedetour.us/</guid>
+</item>
+</channel>
+</rss>`;
+
+        let stations = [];
+        let originalChannelInfo = {
+            title: '',
+            link: '',
+            atomLink: '',
+            description: '',
+            lastBuildDate: ''
+        };
+
+        const stationsTableBody = document.getElementById('stationsTable').getElementsByTagName('tbody')[0];
+        const stationModal = document.getElementById('stationModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const stationIdInput = document.getElementById('stationId');
+        const stationTitleInput = document.getElementById('stationTitle');
+        const stationCityInput = document.getElementById('stationCity');
+        const stationWebsiteInput = document.getElementById('stationWebsite');
+        const xmlOutputTextarea = document.getElementById('xmlOutput');
+        const xmlOutputContainer = document.getElementById('xmlOutputContainer');
+
+
+        function parseXML(xmlString) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+
+            if (xmlDoc.getElementsByTagName("parsererror").length) {
+                console.error("Error parsing XML:", xmlDoc.getElementsByTagName("parsererror")[0]);
+                alert("Error parsing XML. Please check the console for details.");
+                return [];
+            }
+
+            const channel = xmlDoc.getElementsByTagName("channel")[0];
+            if (channel) {
+                originalChannelInfo.title = channel.getElementsByTagName("title")[0]?.textContent || 'Pacifica Network Affiliates';
+                originalChannelInfo.link = channel.getElementsByTagName("link")[0]?.textContent || 'https://pacificanetwork.org/stations-2/';
+                const atomLinkNode = channel.querySelector("atom\\:link, link[rel='self']");
+                originalChannelInfo.atomLink = atomLinkNode ? atomLinkNode.getAttribute('href') : 'https://starkey.digital/pacifica/pacifica_affiliates.xml';
+                originalChannelInfo.description = channel.getElementsByTagName("description")[0]?.textContent || 'List of Pacifica Network affiliate stations';
+                originalChannelInfo.lastBuildDate = channel.getElementsByTagName("lastBuildDate")[0]?.textContent || new Date().toUTCString();
+            }
+
+
+            const items = xmlDoc.getElementsByTagName("item");
+            const parsedStations = [];
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const title = item.getElementsByTagName("title")[0]?.textContent || '';
+                const link = item.getElementsByTagName("link")[0]?.textContent || '';
+                const description = item.getElementsByTagName("description")[0]?.textContent || ''; // This is the city
+                const guid = item.getElementsByTagName("guid")[0]?.textContent || link; // Use link as fallback for guid
+                parsedStations.push({ id: guid, title, city: description, website: link, guid });
+            }
+            return parsedStations;
+        }
+
+        function renderTable() {
+            if (!isAuthenticated) {
+                // Don't render the table if not logged in
+                document.querySelector('.container').style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Show the container when logged in
+                document.querySelector('.container').style.display = 'block';
+                
+                // Make sure we have a stations table body
+                const tbody = document.querySelector('#stationsTable tbody');
+                if (!tbody) {
+                    console.error('Stations table body not found');
+                    return;
+                }
+                
+                // Create a document fragment for better performance
+                const fragment = document.createDocumentFragment();
+                
+                // Make sure stations is an array and sort it alphabetically by title
+                if (!Array.isArray(stations)) {
+                    console.error('Stations is not an array:', stations);
+                    return;
+                }
+                
+                const sortedStations = [...stations].sort((a, b) => 
+                    (a.title || '').localeCompare(b.title || '')
+                );
+                
+                // Add each station to the fragment
+                sortedStations.forEach(station => {
+                    if (!station) return; // Skip null/undefined stations
+                    
+                    const row = document.createElement('tr');
+                    
+                    // Create table cells
+                    const titleCell = document.createElement('td');
+                    titleCell.textContent = station.title || '';
+                    
+                    const cityCell = document.createElement('td');
+                    cityCell.textContent = station.city || '';
+                    
+                    const websiteCell = document.createElement('td');
+                    if (station.website) {
+                        const link = document.createElement('a');
+                        const website = String(station.website);
+                        link.href = website.startsWith('http') ? website : `http://${website}`;
+                        link.textContent = website;
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        websiteCell.appendChild(link);
+                    }
+                    
+                    const actionsCell = document.createElement('td');
+                    
+                    // Edit button
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn btn-edit';
+                    editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                    editBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        openModal(station);
+                    };
+                    
+                    // Delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-delete';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        showDeleteConfirmation(station);
+                    };
+                    
+                    actionsCell.appendChild(editBtn);
+                    actionsCell.appendChild(deleteBtn);
+                    
+                    // Append cells to row
+                    row.appendChild(titleCell);
+                    row.appendChild(cityCell);
+                    row.appendChild(websiteCell);
+                    row.appendChild(actionsCell);
+                    
+                    // Add row to fragment
+                    fragment.appendChild(row);
+                });
+                
+                // Clear the table body and append the fragment
+                tbody.innerHTML = '';
+                tbody.appendChild(fragment);
+                
+            } catch (error) {
+                console.error('Error rendering table:', error);
+            }
+        }
+
+        function openModal(station = null) {
+            if (!isAuthenticated) {
+                showPasswordModal();
+                return;
+            }
+            
+            const modal = document.getElementById('stationModal');
+            const title = modal.querySelector('h2');
+            const idInput = document.getElementById('stationId');
+            const titleInput = document.getElementById('stationTitle');
+            const cityInput = document.getElementById('stationCity');
+            const websiteInput = document.getElementById('stationWebsite');
+            
+            if (station) {
+                title.textContent = 'Edit Station';
+                idInput.value = station.id || '';
+                titleInput.value = station.title || '';
+                cityInput.value = station.city || '';
+                websiteInput.value = station.website || '';
+            } else {
+                title.textContent = 'Add Station';
+                idInput.value = '';
+                titleInput.value = '';
+                cityInput.value = '';
+                websiteInput.value = '';
+            }
+            
+            modal.style.display = 'block';
+            titleInput.focus();
+        }
+
+        function closeModal() {
+            stationModal.style.display = 'none';
+        }
+
+        // Track if we're currently saving to prevent double saves
+        let isSaving = false;
+
+        async function saveStation() {
+            // Prevent double saves
+            if (isSaving) return;
+            isSaving = true;
+            
+            try {
+                if (!isAuthenticated) {
+                    showPasswordModal();
+                    return;
+                }
+                
+                const id = document.getElementById('stationId').value;
+                const title = document.getElementById('stationTitle').value.trim();
+                const city = document.getElementById('stationCity').value.trim();
+                const website = document.getElementById('stationWebsite').value.trim();
+
+                if (!title) {
+                    alert('Title is required');
+                    return;
+                }
+
+                if (id) {
+                    // Update existing station
+                    const index = stations.findIndex(s => s.id === id);
+                    if (index !== -1) {
+                        stations[index] = { 
+                            ...stations[index], 
+                            title, 
+                            city: city || 'N/A', 
+                            website: website || '' 
+                        };
+                    }
+                } else {
+                    // Normalize the input title for comparison
+                    const normalizedInput = title.trim().toLowerCase();
+                    
+                    // Check for duplicate station (case-insensitive, trimmed)
+                    const exists = stations.some(s => 
+                        s.title && s.title.trim().toLowerCase() === normalizedInput
+                    );
+                    
+                    if (exists) {
+                        console.log('Duplicate station detected:', { 
+                            inputTitle: title,
+                            normalizedInput,
+                            existingTitles: stations.map(s => s.title)
+                        });
+                        alert('A station with this title already exists');
+                        return;
+                    }
+                    
+                    // Add new station
+                    const newId = Date.now().toString();
+                    const newStation = { 
+                        id: newId, 
+                        title, 
+                        city: city || 'N/A', 
+                        website: website || '',
+                        guid: website || newId
+                    };
+                    stations.push(newStation);
+                }
+                
+                // Sort stations alphabetically by title
+                stations.sort((a, b) => a.title.localeCompare(b.title));
+                
+                // Save to localStorage and update XML
+                await saveStations();
+                
+                // Re-render the table to show changes
+                renderTable();
+                
+                // Close the modal
+                closeModal();
+                
+            } catch (error) {
+                console.error('Error saving station:', error);
+                alert('An error occurred while saving the station');
+            } finally {
+                isSaving = false;
+            }
+        }
+        
+        async function saveStations() {
+            try {
+                // Update the XML data
+                const xmlContent = await updateXML();
+                
+                // Save to the server
+                const response = await fetch('/api/xml', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/xml'
+                    },
+                    body: xmlContent
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+                
+                console.log('Stations and XML updated successfully');
+                return true;
+            } catch (e) {
+                console.error('Failed to save stations:', e);
+                alert(`Failed to save changes: ${e.message}`);
+                return false;
+            }
+        }
+
+        let stationToDelete = null;
+        
+        function showDeleteConfirmation(station) {
+            if (!isAuthenticated) {
+                showPasswordModal();
+                return;
+            }
+            
+            stationToDelete = station;
+            const confirmationText = document.getElementById('deleteConfirmationText');
+            confirmationText.textContent = `Are you sure you want to delete "${station.title || 'this station'}"? This action cannot be undone.`;
+            document.getElementById('deleteConfirmModal').style.display = 'block';
+        }
+        
+        async function deleteStation() {
+            if (!stationToDelete) return;
+            
+            try {
+                // Filter out the station to delete
+                stations = stations.filter(s => s.id !== stationToDelete.id);
+                
+                // Save changes
+                await saveStations();
+                
+                // Update the UI
+                renderTable();
+                closeDeleteModal();
+            } catch (error) {
+                console.error('Error deleting station:', error);
+                alert('An error occurred while deleting the station');
+            } finally {
+                stationToDelete = null;
+            }
+        }
+
+        function closeDeleteModal() {
+            stationToDelete = null;
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        }
+
+        // Default channel info if not set
+        const defaultChannelInfo = {
+            title: 'Pacifica Affiliates',
+            link: 'https://pacifica.org',
+            atomLink: 'https://pacifica.org/affiliates',
+            description: 'List of Pacifica Radio Network affiliates',
+            language: 'en-us',
+            pubDate: new Date().toUTCString(),
+            lastBuildDate: new Date().toUTCString()
+        };
+
+        async function updateXML() {
+            return new Promise((resolve) => {
+                try {
+                    // Generate the XML
+                    const channelInfo = window.originalChannelInfo || defaultChannelInfo;
+                    
+                    let xmlString = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+                    xmlString += `<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">\n`;
+                    xmlString += `  <channel>\n`;
+                    xmlString += `    <title>${escapeXml(channelInfo.title)}</title>\n`;
+                    xmlString += `    <link>${escapeXml(channelInfo.link)}</link>\n`;
+                    xmlString += `    <atom:link href="${escapeXml(channelInfo.atomLink)}" rel="self" type="application/rss+xml"/>\n`;
+                    xmlString += `    <description>${escapeXml(channelInfo.description)}</description>\n`;
+                    xmlString += `    <language>${escapeXml(channelInfo.language || 'en-us')}</language>\n`;
+                    xmlString += `    <pubDate>${escapeXml(new Date().toUTCString())}</pubDate>\n`;
+                    xmlString += `    <lastBuildDate>${escapeXml(new Date().toUTCString())}</lastBuildDate>\n`;
+
+                    // Add stations sorted alphabetically by title
+                    if (stations && stations.length > 0) {
+                        // Create a copy and sort it
+                        const sortedStations = [...stations].sort((a, b) => 
+                            (a.title || '').localeCompare(b.title || '')
+                        );
+                        
+                        sortedStations.forEach(station => {
+                            if (station && station.title) {
+                                xmlString += `    <item>\n`;
+                                xmlString += `      <title>${escapeXml(station.title)}</title>\n`;
+                                
+                                const link = station.website || station.link || '';
+                                if (link) {
+                                    xmlString += `      <link>${escapeXml(link)}</link>\n`;
+                                }
+                                
+                                const description = station.city || station.description || '';
+                                if (description) {
+                                    xmlString += `      <description>${escapeXml(description)}</description>\n`;
+                                }
+                                
+                                const guid = station.guid || station.id || link || `station-${Date.now()}`;
+                                xmlString += `      <guid isPermaLink="${guid.startsWith('http') ? 'true' : 'false'}">${escapeXml(guid)}</guid>\n`;
+                                xmlString += `    </item>\n`;
+                            }
+                        });
+                    }
+                    
+                    xmlString += `  </channel>\n`;
+                    xmlString += `</rss>`;
+                    
+                    // Update the original XML data
+                    // [FIXED] Removed fatal assignment to initialXmlData; do not mutate constants.
+                    
+                    // Store in localStorage for persistence
+                    if (typeof Storage !== 'undefined') {
+                        localStorage.setItem('pacificaStations', JSON.stringify(stations));
+                        localStorage.setItem('pacificaLastUpdated', new Date().toISOString());
+                    }
+                    
+                    resolve(xmlString);
+                    
+                } catch (error) {
+                    console.error('Error updating XML:', error);
+                    resolve(null);
+                }
+            });
+        }
+
+        function escapeXml(unsafe) {
+            if (typeof unsafe !== 'string') {
+                return unsafe;
+            }
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                }
+            });
+        }
+
+        // Function to download the current XML
+        function downloadXML() {
+            if (!isAuthenticated) {
+                showPasswordModal();
+                return;
+            }
+            
+            try {
+                // Ensure we have the latest XML data
+                const xmlData = updateXML() || initialXmlData;
+                if (!xmlData) {
+                    alert("No XML data available to download.");
+                    return;
+                }
+                
+                const blob = new Blob([xmlData], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'pacifica_affiliates_updated.xml';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error downloading XML:', error);
+                alert('An error occurred while downloading the XML file');
+            }
+        }
+
+        // Set up event listeners - Moved to DOMContentLoaded to prevent duplicates
+
+        // Set up delete confirmation modal
+        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        
+        confirmDeleteBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteStation();
+        });
+        
+        cancelDeleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeDeleteModal();
+        });
+
+        // Close modal if escape key is pressed
+        window.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal if clicked outside of it
+        window.onclick = function(event) {
+            if (event.target == stationModal) {
+                closeModal();
+            } else if (event.target == document.getElementById('deleteConfirmModal')) {
+                closeDeleteModal();
+            }
+        }
+
+        // Password protection
+        const PASSWORD_KEY = 'station_manager_password';
+        let isAuthenticated = false;
+        
+        // Check if password is set, if not set default
+        async function initAuth() {
+            if (!localStorage.getItem(PASSWORD_KEY)) {
+                // First time setup - set default password 'admin123'
+                const defaultPassword = 'admin123';
+                const hashedPassword = await hashPassword(defaultPassword);
+                localStorage.setItem(PASSWORD_KEY, JSON.stringify({
+                    hash: hashedPassword,
+                    lastChanged: new Date().toISOString()
+                }));
+            }
+            showPasswordModal();
+        }
+        
+        // Simple password hashing
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode('pacifica-' + password); // Add a pepper
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Show password modal
+        function showPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('passwordInput').focus();
+            disableApp();
+        }
+        
+        // Hide password modal
+        function hidePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+        }
+        
+        // Disable app (show only password modal)
+        function disableApp() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.querySelectorAll('button, input, select, textarea').forEach(el => {
+                el.disabled = true;
+            });
+            // Re-enable password input
+            document.getElementById('passwordInput').disabled = false;
+            document.getElementById('submitPasswordBtn').disabled = false;
+        }
+        
+        // Enable app (hide password modal)
+        function enableApp() {
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
+            document.querySelectorAll('button, input, select, textarea').forEach(el => {
+                el.disabled = false;
+            });
+            isAuthenticated = true;
+            
+            // Make sure stations are loaded and rendered
+            if (!stations || stations.length === 0) {
+                stations = parseXML(initialXmlData);
+            }
+            renderTable();
+        }
+        
+        // Verify password
+        async function verifyPassword(password) {
+            const savedData = JSON.parse(localStorage.getItem(PASSWORD_KEY));
+            const hashedPassword = await hashPassword(password);
+            return hashedPassword === savedData.hash;
+        }
+        
+        // Change password
+        async function changePassword(newPassword) {
+            const hashedPassword = await hashPassword(newPassword);
+            localStorage.setItem(PASSWORD_KEY, JSON.stringify({
+                hash: hashedPassword,
+                lastChanged: new Date().toISOString()
+            }));
+            return true;
+        }
+        
+        // Event Listeners
+        document.getElementById('submitPasswordBtn').addEventListener('click', async () => {
+            const password = document.getElementById('passwordInput').value;
+            if (await verifyPassword(password)) {
+                hidePasswordModal();
+                enableApp();
+            } else {
+                document.getElementById('passwordError').textContent = 'Incorrect password';
+                document.getElementById('passwordError').style.display = 'block';
+            }
+        });
+        
+        document.getElementById('passwordInput').addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const password = document.getElementById('passwordInput').value;
+                if (await verifyPassword(password)) {
+                    hidePasswordModal();
+                    enableApp();
+                } else {
+                    document.getElementById('passwordError').textContent = 'Incorrect password';
+                    document.getElementById('passwordError').style.display = 'block';
+                }
+            }
+        });
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            isAuthenticated = false;
+            showPasswordModal();
+        });
+        
+        // Change password functionality
+        document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
+            document.getElementById('changePasswordModal').style.display = 'block';
+        });
+        
+        document.getElementById('savePasswordBtn')?.addEventListener('click', async () => {
+            const newPassword = document.getElementById('newPasswordInput').value;
+            const confirmPassword = document.getElementById('confirmPasswordInput').value;
+            
+            if (newPassword !== confirmPassword) {
+                document.getElementById('changePasswordError').textContent = 'Passwords do not match';
+                document.getElementById('changePasswordError').style.display = 'block';
+                return;
+            }
+            
+            if (newPassword.length < 4) {
+                document.getElementById('changePasswordError').textContent = 'Password must be at least 4 characters';
+                document.getElementById('changePasswordError').style.display = 'block';
+                return;
+            }
+            
+            await changePassword(newPassword);
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('confirmPasswordInput').value = '';
+            alert('Password changed successfully!');
+        });
+        
+        document.getElementById('cancelPasswordBtn')?.addEventListener('click', () => {
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('confirmPasswordInput').value = '';
+            document.getElementById('changePasswordError').style.display = 'none';
+        });
+        
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Track if initialization has been done
+        let isInitialized = false;
+
+        // Initialize the app when the DOM is fully loaded
+        async function loadStationsFromServer() {
+            try {
+                const response = await fetch('/api/xml');
+                if (!response.ok) {
+                    throw new Error(`Failed to load stations: ${response.status} ${response.statusText}`);
+                }
+                const xmlContent = await response.text();
+                stations = parseXML(xmlContent) || [];
+                renderTable();
+                return true;
+            } catch (error) {
+                console.error('Error loading stations from server:', error);
+                // Fall back to localStorage if available
+                if (typeof Storage !== 'undefined') {
+                    const savedStations = localStorage.getItem('pacificaStations');
+                    if (savedStations) {
+                        stations = JSON.parse(savedStations);
+                        renderTable();
+                        return true;
+                    }
+                }
+                alert('Failed to load stations. Please check your connection and refresh the page.');
+                return false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Only initialize once
+            if (isInitialized) return;
+            isInitialized = true;
+            
+            // Load stations from server
+            await loadStationsFromServer();
+            
+            // Initialize the app
+            initAuth();
+            
+            try {
+                // Try to load from localStorage first
+                if (typeof Storage !== 'undefined') {
+                    const savedStations = localStorage.getItem('pacificaStations');
+                    if (savedStations) {
+                        stations = JSON.parse(savedStations);
+                        console.log('Loaded stations from localStorage:', stations.length);
+                    }
+                }
+                
+                // If no stations in localStorage, load from initial XML
+                if (!stations || stations.length === 0) {
+                    if (initialXmlData) {
+                        stations = parseXML(initialXmlData) || [];
+                        console.log('Loaded stations from initial XML:', stations.length);
+                    }
+                }
+                
+                // Ensure stations is an array
+                if (!Array.isArray(stations)) {
+                    console.error('Invalid stations data, initializing empty array');
+                    stations = [];
+                }
+                
+                // Sort stations alphabetically
+                stations.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+                
+                // Update XML with current stations
+                await updateXML();
+                
+                // Render the table
+                renderTable();
+                
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                alert('Failed to initialize application. Please check console for details.');
+            }
+            
+            // Single event delegation for all buttons to prevent duplicate handlers
+            document.addEventListener('click', function(event) {
+                // Handle add station button
+                if (event.target.matches('#addStationBtn, #addStationBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openModal();
+                } 
+                // Handle save station button
+                else if (event.target.matches('#saveStationBtn, #saveStationBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    saveStation();
+                } 
+                // Handle cancel button in modal
+                else if (event.target.matches('#cancelModalBtn, #cancelModalBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeModal();
+                }
+                // Handle delete buttons in the table
+                else if (event.target.closest('.delete-btn')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const row = event.target.closest('tr');
+                    const stationId = row.dataset.id;
+                    const station = stations.find(s => s.id === stationId);
+                    if (station) {
+                        showDeleteConfirmation(station);
+                    }
+                }
+                // Handle password-related buttons
+                else if (event.target.matches('#savePasswordBtn, #savePasswordBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    savePassword();
+                } 
+                else if (event.target.matches('#cancelPasswordBtn, #cancelPasswordBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closePasswordModal();
+                } 
+                // Handle delete confirmation
+                else if (event.target.matches('#confirmDeleteBtn, #confirmDeleteBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    deleteStation();
+                } else if (event.target.matches('#cancelDeleteBtn, #cancelDeleteBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeDeleteModal();
+                } else if (event.target.matches('#logoutBtn, #logoutBtn *')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    logout();
+                }
+            });
+
+            // Add keyup listener for password field
+            const passwordField = document.getElementById('password');
+            if (passwordField) {
+                passwordField.addEventListener('keyup', function(event) {
+                    if (event.key === 'Enter') {
+                        savePassword();
+                    }
+                }, { once: true }); // Use once: true to prevent multiple bindings
+            }
+        });
+
+    </script>
+</body>
+</html>
