@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
-    <title>Pacifica Affiliates</title>
-    <link>https://pacifica.org</link>
-    <atom:link href="https://pacifica.org/affiliates" rel="self" type="application/rss+xml"/>
-    <description>List of Pacifica Radio Network affiliates</description>
+    <title>Pacifica Network Affiliates</title>
+    <link>https://pacificanetwork.org/stations-2/</link>
+    <atom:link href="https://starkey.digital/pacifica/pacifica_affiliates.xml" rel="self" type="application/rss+xml"/>
+    <description>List of Pacifica Network affiliate stations</description>
     <language>en-us</language>
-    <pubDate>Mon, 26 May 2025 19:20:06 GMT</pubDate>
-    <lastBuildDate>Mon, 26 May 2025 19:20:06 GMT</lastBuildDate>
+    <lastBuildDate>2025-05-26T21:03:54.238Z</lastBuildDate>
     <item>
-      <title>AfroBeat Radio</title>
-      <link>http://afrobeatradio.org/</link>
-      <description>Brooklyn, NY</description>
-      <guid isPermaLink="true">http://afrobeatradio.org/</guid>
+      <title>KPFK</title>
+      <link>https://www.kpfk.org/</link>
+      <description>Los Angeles, CA</description>
+      <guid isPermaLink="true">https://www.kpfk.org/</guid>
     </item>
     <item>
-      <title>bbbb</title>
-      <link>aaa</link>
-      <description>aaaaaaaa</description>
+      <title>KPFA</title>
+      <link>https://kpfa.org/</link>
+      <description>Berkeley, CA</description>
+      <guid isPermaLink="true">https://kpfa.org/</guid>
+    </item>
       <guid isPermaLink="false">aaa</guid>
     </item>
     <item>
