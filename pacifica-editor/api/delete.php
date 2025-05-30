@@ -2,7 +2,7 @@
 // Handles deleting stations
 header('Content-Type: application/json');
 
-$xmlFilePath = __DIR__ . '/../../data/pacifica_affiliates.xml';
+$xmlFilePath = __DIR__ . '/../data/pacifica_affiliates.xml'; // Path to XML in data folder
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 
 $inputJSON = file_get_contents('php://input');
@@ -42,7 +42,7 @@ if ($input && isset($input['title'])) {
             $response['message'] = 'Failed to load or parse XML file, or no items found.';
         }
     } else {
-        $response['message'] = 'XML file not found.';
+        $response['message'] = 'XML file not found at: ' . realpath(dirname($xmlFilePath)) . '/' . basename($xmlFilePath) . ' (Attempted: ' . $xmlFilePath . ')';
     }
 } else {
     $response['message'] = 'Invalid input data. Title is required for deletion.';

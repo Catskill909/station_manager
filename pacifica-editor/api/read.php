@@ -2,7 +2,7 @@
 // Handles reading XML data
 header('Content-Type: application/json');
 
-$xmlFilePath = __DIR__ . '/../../data/pacifica_affiliates.xml';
+$xmlFilePath = __DIR__ . '/../data/pacifica_affiliates.xml'; // Path to XML in data folder
 $stations = [];
 
 if (file_exists($xmlFilePath)) {
@@ -22,6 +22,9 @@ if (file_exists($xmlFilePath)) {
 } else {
     // Log error or handle case where file doesn't exist
     // For now, return empty if file is missing
+    // You might want to return an error message here:
+    // echo json_encode(['error' => 'Data file not found at: ' . realpath($xmlFilePath)]);
+    // exit;
 }
 
 echo json_encode(['stations' => $stations]);

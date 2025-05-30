@@ -13,7 +13,7 @@
     <!-- Load Google Fonts: Oswald (Bold 700) and Open Sans (Regular 400, Semibold 600) -->
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
@@ -27,7 +27,10 @@
                 <span class="search-icon">&#128269;</span> <!-- Eyeglass icon -->
                 <input type="text" id="searchInput" placeholder="Search stations...">
             </div>
-            <button id="addStationBtn">Add New Station</button>
+            <div class="button-group">
+                <button id="viewXmlBtn" class="secondary-btn">View XML</button>
+                <button id="addStationBtn">Add New Station</button>
+            </div>
         </div>
         <div id="stationListContainer">
             <!-- Stations will be loaded here by JavaScript -->
@@ -78,7 +81,18 @@
         <p>&copy; <?php echo date("Y"); ?> Pacifica Editor</p>
     </footer>
 
-    <script src="assets/js/app.js"></script>
+    <!-- XML Viewer Modal -->
+    <div id="xmlViewerModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 90%; max-height: 80vh; overflow: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2>XML View</h2>
+                <span class="close-button" id="closeXmlViewer">&times;</span>
+            </div>
+            <pre id="xmlContent" style="background: #1e1e1e; padding: 15px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; color: #e0e0e0; font-family: 'Courier New', monospace;"></pre>
+        </div>
+    </div>
+
+    <script src="/assets/js/app.js"></script>
 </body>
 
 </html>

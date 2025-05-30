@@ -2,7 +2,7 @@
 // Handles adding new stations
 header('Content-Type: application/json');
 
-$xmlFilePath = __DIR__ . '/../../data/pacifica_affiliates.xml';
+$xmlFilePath = __DIR__ . '/../data/pacifica_affiliates.xml'; // Path to XML in data folder
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 
 // Get the JSON data from the request body
@@ -37,7 +37,7 @@ if ($input && isset($input['title'], $input['link'], $input['description'])) {
             $response['message'] = 'Failed to load or parse XML file, or channel missing.';
         }
     } else {
-        $response['message'] = 'XML file not found.';
+        $response['message'] = 'XML file not found at: ' . realpath(dirname($xmlFilePath)) . '/' . basename($xmlFilePath) . ' (Attempted: ' . $xmlFilePath . ')';
     }
 } else {
     $response['message'] = 'Invalid input data. Title, link, and description are required.';

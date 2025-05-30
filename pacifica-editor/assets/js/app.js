@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const stationListContainer = document.getElementById('stationListContainer');
     const addStationBtn = document.getElementById('addStationBtn');
+    const viewXmlBtn = document.getElementById('viewXmlBtn');
     const searchInput = document.getElementById('searchInput');
+    const xmlViewerModal = document.getElementById('xmlViewerModal');
+    const closeXmlViewer = document.getElementById('closeXmlViewer');
+    const xmlContent = document.getElementById('xmlContent');
 
     // Add/Edit Modal Elements
     const stationModal = document.getElementById('stationModal');
@@ -21,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
     let titleToDeleteGlobally = null;
 
-    const apiBaseUrl = 'api/';
+    const apiBaseUrl = '/api/';
     let allStationsCache = []; // Cache for all stations to filter locally
 
     async function fetchAndDisplayStations(searchTerm = '') {
@@ -109,6 +113,71 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeDeleteConfirmModal() {
         deleteConfirmModal.style.display = 'none';
         titleToDeleteGlobally = null;
+    }
+
+        // View XML functionality
+    viewXmlBtn.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/get_xml.php');
+            if (!response.ok) throw new Error('Failed to load XML');
+            const xmlText = await response.text();
+            
+            // Format XML with proper indentation
+            const formattedXml = formatXml(xmlText);
+            xmlContent.textContent = formattedXml;
+            xmlViewerModal.style.display = 'block';
+        } catch (error) {
+            console.error('Error loading XML:', error);
+            alert('Failed to load XML file. Please check console for details.');
+        }
+    });
+
+    // Close XML viewer when clicking the close button
+    closeXmlViewer.addEventListener('click', () => {
+        xmlViewerModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside the content
+    window.addEventListener('click', (event) => {
+        if (event.target === xmlViewerModal) {
+            xmlViewerModal.style.display = 'none';
+        }
+    });
+
+    // Format XML string with proper indentation
+    function formatXml(xml) {
+        const PADDING = '  ';
+        const reg = /(>)(<)(\/*)/g;
+        let formatted = '';
+        let pad = 0;
+        
+        // Add newlines and indentation
+        xml = xml.replace(reg, '$1\r\n$2$3');
+        
+        // Split by newlines and process each line
+        const nodes = xml.split('\r\n');
+        for (let node of nodes) {
+            let indent = 0;
+            if (node.match(/.+<\/\w[^>]*>$/)) {
+                indent = 0;
+            } else if (node.match(/^<\/\w/) && pad > 0) {
+                pad -= 1;
+            } else if (node.match(/^<\w[^>]*[^\/]>.*$/)) {
+                indent = 1;
+            } else {
+                indent = 0;
+            }
+            
+            let padding = '';
+            for (let i = 0; i < pad; i++) {
+                padding += PADDING;
+            }
+            
+            formatted += padding + node + '\r\n';
+            pad += indent;
+        }
+        
+        return formatted.trim();
     }
 
     addStationBtn.addEventListener('click', () => openStationModal('add'));
