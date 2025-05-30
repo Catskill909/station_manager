@@ -1,0 +1,369 @@
+/* Main stylesheet (Material Design dark mode - Monochromatic Focus) */
+body {
+    background-color: #181818; /* Slightly darker base for more contrast */
+    color: #e0e0e0; /* General light text */
+    font-family: 'Open Sans', sans-serif; /* Default body font */
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased; /* Smoother fonts */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+header {
+    background-color: #1f1f1f; /* Darker shade for header */
+    width: 100%;
+    padding: 20px 0; /* Compacted header padding */
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.6); /* Slightly stronger shadow */
+    margin-bottom: 30px; /* Compacted margin */
+}
+
+header h1 {
+    margin: 0;
+    color: #f0f0f0; /* Very light header text */
+    font-family: 'Oswald', sans-serif; /* Oswald for main header */
+    font-weight: 700; /* Bold Oswald */
+    font-size: 2.2em; /* Larger for impact */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+main {
+    width: 90%;
+    max-width: 960px; /* Adjusted max width */
+    flex-grow: 1;
+}
+
+.controls {
+    margin-bottom: 20px; /* Compacted margin */
+    display: flex; /* For aligning search and add button */
+    justify-content: space-between; /* Puts search on left, button on right */
+    align-items: center;
+}
+
+/* Search Input Styles */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#searchInput {
+    padding: 9px 14px 9px 38px; /* Adjusted padding */
+    border: 1px solid #333333; /* Darker border */
+    border-radius: 4px;
+    background-color: #1c1c1c; /* Darker input */
+    color: #d8d8d8; /* Lighter input text */
+    font-size: 0.9em;
+    font-family: 'Open Sans', sans-serif;
+    width: 230px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#searchInput:focus {
+    border-color: #506070; /* Subtle blue-grey focus */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(80, 96, 112, 0.25);
+}
+
+.search-container .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #707070;
+    font-size: 1.1em;
+}
+
+
+button, input[type="submit"], input[type="button"] {
+    background-color: #2a2a2a; /* Darker button base */
+    color: #c8c8c8; /* Lighter button text */
+    border: 1px solid #353535;
+    padding: 9px 20px; /* Adjusted padding */
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600; /* Semibold for buttons */
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover, input[type="submit"]:hover, input[type="button"]:hover {
+    background-color: #313131;
+    border-color: #404040;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    color: #d8d8d8;
+}
+
+#addStationBtn, #saveStationBtn {
+    background-color: #3a4a5a; /* Subtle dark blue-grey */
+    border-color: #455565;
+    color: #e0e8f0; /* Lighter text for contrast */
+}
+#addStationBtn:hover, #saveStationBtn:hover {
+    background-color: #455565;
+    border-color: #506070;
+}
+
+#confirmDeleteBtn.danger-btn {
+    background-color: #5a3a3a; /* Subtle dark desaturated red/brown for delete */
+    border-color: #6a4a4a;
+    color: #f0e0e0; /* Lighter text for contrast */
+}
+#confirmDeleteBtn.danger-btn:hover {
+    background-color: #6a4a4a;
+    border-color: #7a5a5a;
+}
+
+
+#stationListContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px; /* Adjusted gap */
+    background-color: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+@media (min-width: 768px) {
+    #stationListContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.station-item {
+    background-color: #202020; /* Darker card */
+    padding: 18px; /* Adjusted padding */
+    border-radius: 5px; /* Softer rounding */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.15); /* Adjusted shadow */
+    border: 1px solid #282828; /* Softer border */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.station-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.35), 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.station-item h3 {
+    margin-top: 0;
+    margin-bottom: 8px; /* Adjusted margin */
+    color: #dadada; /* Lighter card title */
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600; /* Semibold for card titles */
+    font-size: 1.15em; /* Adjusted size */
+}
+
+.station-item p {
+    margin: 6px 0;
+    font-size: 0.9em; /* Adjusted size */
+    color: #a0a0a0; /* Lighter description text for more contrast */
+    line-height: 1.5; /* Improved line height */
+}
+
+.station-item a {
+    color: #7890a8; /* Softer, slightly desaturated blue-grey */
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.station-item a:hover {
+    text-decoration: underline;
+    color: #8fa4ba; /* Lighter on hover */
+}
+
+.station-actions {
+    margin-top: 15px; /* Adjusted margin */
+    align-self: flex-end;
+}
+
+.station-actions button {
+    background-color: transparent;
+    padding: 6px 12px; /* Adjusted padding */
+    margin-left: 8px; /* Adjusted margin */
+    font-size: 0.8em;
+    font-weight: 600; /* Semibold for action buttons */
+    box-shadow: none;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.station-actions button.edit-btn {
+    color: #7890a8; /* Softer blue-grey */
+    border-color: #7890a8;
+}
+.station-actions button.edit-btn:hover {
+    background-color: rgba(120, 144, 168, 0.1);
+    color: #8fa4ba;
+}
+
+.station-actions button.delete-btn {
+    color: #a87878; /* Softer desaturated red/brown */
+    border-color: #a87878;
+}
+.station-actions button.delete-btn:hover {
+    background-color: rgba(168, 120, 120, 0.1);
+    color: #ba8f8f;
+}
+
+
+/* Modal Styles - Centered */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.85); /* Darker overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background-color: #222222; /* Darker modal */
+    padding: 28px 32px; /* Adjusted padding */
+    border-radius: 6px;
+    box-shadow: 0 7px 18px rgba(0,0,0,0.5); /* Adjusted shadow */
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    border: 1px solid #303030;
+}
+
+.close-button {
+    color: #888;
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #b8b8b8;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal h2 {
+    margin-top: 0;
+    margin-bottom: 22px;
+    color: #e0e0e0; /* Lighter modal title */
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600; /* Semibold for modal titles */
+    font-size: 1.5em; /* Adjusted size */
+    text-align: center;
+}
+
+.modal div:not(.modal-actions) {
+    margin-bottom: 18px; /* Adjusted spacing */
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 7px;
+    color: #b8b8b8; /* Lighter labels */
+    font-size: 0.9em;
+    font-weight: 400;
+}
+
+.modal input[type="text"],
+.modal input[type="url"] {
+    width: 100%;
+    padding: 11px; /* Adjusted padding */
+    border: 1px solid #383838;
+    border-radius: 4px;
+    background-color: #1a1a1a; /* Darkest input background */
+    color: #d8d8d8; /* Lighter input text */
+    font-size: 0.95em;
+    font-family: 'Open Sans', sans-serif;
+    box-sizing: border-box;
+}
+
+.modal input[type="text"]:focus,
+.modal input[type="url"]:focus {
+    border-color: #506070; /* Subtle blue-grey focus */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(80, 96, 112, 0.2);
+}
+
+.modal-actions {
+    text-align: right;
+    margin-top: 28px;
+}
+
+.modal-actions button {
+    margin-left: 10px;
+    padding: 9px 18px; /* Ensure modal buttons are still reasonably sized */
+}
+
+#cancelModalBtn, #cancelDeleteBtn {
+    background-color: #353535;
+    border-color: #424242;
+    color: #c0c0c0;
+}
+#cancelModalBtn:hover, #cancelDeleteBtn:hover {
+    background-color: #3d3d3d;
+    border-color: #4f4f4f;
+}
+
+/* Delete Confirmation Modal Specific Styles */
+#deleteConfirmModal .modal-content {
+    max-width: 400px;
+}
+
+#deleteConfirmModal p {
+    text-align: center;
+    font-size: 1.05em; /* Adjusted size */
+    color: #c8c8c8; /* Lighter text */
+    margin-bottom: 28px;
+    line-height: 1.6;
+}
+
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 22px 0;
+    margin-top: 35px;
+    background-color: #1f1f1f;
+    font-size: 0.8em;
+    color: #606060;
+    border-top: 1px solid #2a2a2a;
+}
+
+/* Utility for screen readers only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.hidden {
+    display: none !important;
+}
