@@ -1,7 +1,7 @@
 /* Main stylesheet (Material Design dark mode - Monochromatic Focus) */
 body {
     background-color: #181818; /* Slightly darker base for more contrast */
-    color: #e0e0e0; /* General light text */
+    color: #e8e8e8; /* General light text */
     font-family: 'Open Sans', sans-serif; /* Default body font */
     font-weight: 400;
     margin: 0;
@@ -19,7 +19,7 @@ header {
     width: 100%;
     padding: 20px 0; /* Compacted header padding */
     text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.6); /* Slightly stronger shadow */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.65); /* More pronounced shadow */
     margin-bottom: 30px; /* Compacted margin */
 }
 
@@ -126,12 +126,12 @@ button, input[type="submit"], input[type="button"] {
     background-color: #2a2a2a; /* Darker button base */
     color: #c8c8c8; /* Lighter button text */
     border: 1px solid #353535;
-    padding: 9px 20px; /* Adjusted padding */
+    padding: 8px 14px; /* Compacted padding */
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Open Sans', sans-serif;
     font-weight: 600; /* Semibold for buttons */
-    font-size: 0.85em;
+    font-size: 0.8em;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     box-shadow: 0 1px 1px rgba(0,0,0,0.2);
@@ -183,9 +183,9 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover {
 
 .station-item {
     background-color: #202020; /* Darker card */
-    padding: 18px; /* Adjusted padding */
+    padding: 14px; /* Compacted padding */
     border-radius: 5px; /* Softer rounding */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.15); /* Adjusted shadow */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.35), 0 2px 5px rgba(0,0,0,0.22); /* Increased drop shadow */
     border: 1px solid #282828; /* Softer border */
     display: flex;
     flex-direction: column;
@@ -200,41 +200,41 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover {
 
 .station-item h3 {
     margin-top: 0;
-    margin-bottom: 8px; /* Adjusted margin */
-    color: #dadada; /* Lighter card title */
+    margin-bottom: 5px; /* Compacted margin */
+    color: #eeeeee; /* Lighter card title */
     font-family: 'Open Sans', sans-serif;
     font-weight: 600; /* Semibold for card titles */
     font-size: 1.15em; /* Adjusted size */
 }
 
 .station-item p {
-    margin: 6px 0;
+    margin: 4px 0; /* Compacted margin */
     font-size: 0.9em; /* Adjusted size */
-    color: #a0a0a0; /* Lighter description text for more contrast */
+    color: #b8b8b8; /* Lighter description text */
     line-height: 1.5; /* Improved line height */
 }
 
 .station-item a {
-    color: #7890a8; /* Softer, slightly desaturated blue-grey */
+    color: #8aa0b8; /* Lighter, subtle blue-grey */
     text-decoration: none;
     word-break: break-all;
 }
 
 .station-item a:hover {
     text-decoration: underline;
-    color: #8fa4ba; /* Lighter on hover */
+    color: #a0b4ca; /* Lighter on hover */
 }
 
 .station-actions {
-    margin-top: 15px; /* Adjusted margin */
+    margin-top: 12px; /* Compacted margin */
     align-self: flex-end;
 }
 
 .station-actions button {
     background-color: transparent;
-    padding: 6px 12px; /* Adjusted padding */
+    padding: 5px 8px; /* Icon-like padding */
     margin-left: 8px; /* Adjusted margin */
-    font-size: 0.8em;
+    font-size: 0.75em; /* Smaller font for compact buttons */
     font-weight: 600; /* Semibold for action buttons */
     box-shadow: none;
     border-width: 1px;
@@ -242,21 +242,21 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover {
 }
 
 .station-actions button.edit-btn {
-    color: #7890a8; /* Softer blue-grey */
-    border-color: #7890a8;
+    color: #8aa0b8; /* Lighter blue-grey */
+    border-color: #8aa0b8;
 }
 .station-actions button.edit-btn:hover {
-    background-color: rgba(120, 144, 168, 0.1);
-    color: #8fa4ba;
+    background-color: rgba(138, 160, 184, 0.15); /* Lighter hover background */
+    color: #a0b4ca; /* Lighter hover color */
 }
 
 .station-actions button.delete-btn {
-    color: #a87878; /* Softer desaturated red/brown */
-    border-color: #a87878;
+    color: #b88a8a; /* Lighter desaturated red/brown */
+    border-color: #b88a8a;
 }
 .station-actions button.delete-btn:hover {
-    background-color: rgba(168, 120, 120, 0.1);
-    color: #ba8f8f;
+    background-color: rgba(184, 138, 138, 0.15); /* Lighter hover background */
+    color: #ca9f9f; /* Lighter hover color */
 }
 
 
